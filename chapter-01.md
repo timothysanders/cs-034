@@ -149,3 +149,101 @@ if num_courses > 0:                        # avoid division by zero
 - `2 + 3 * 4 == 14`: multiplication has precedence over addition
 - `8 - 3 + 1 == 6`: Python evaluates this from left to right
 - `4 * (2 + 5) == 28`: Python computes the portion in parentheses prior to multiplication
+
+### 1.4: Collection Types
+- Python has a number of built-in classes that can represent collections of other objects, which includes `str`, `list`, `tuple`, `set`, `frozenset`, and `dict`
+#### The `str` class
+- The `str` class represents an immutable sequence of text characters, using [Unicode](https://home.unicode.org/). Strings are used to represent all text characters, including strings of just one character. Strings can be enclosed in single quotes (`'`) or double quotes (`"`).
+- The string delimiter itself can be represented in a string by using a backslash `\`, called an *escape character*. Backslashes themselves must be escaped to show up in strings (`\\`). Other common escape characters are `\n` (newline) and `\t` (tab)
+- Can also use triple quotes to begin and end a string literal, which allows you to create multi-line strings
+- Strings are an **array-based** structure, characters are stored sequentially within consecutive cells of memory. Characters of a string can be accessed via a numeric index, with Python being a zero-indexed language. You can also use negative indices (starting from -1) to count from the end of a string
+- Python uses slicing notation to create substrings of a string, ex. `"sample"[:2] == "sa"` (note the stop index is excluded). String lengths can be calculated with `len()`. The `+` operator concatenates two strings, the `*` operator repeats concatenation, and the syntax `pattern in s` checks to see if `pattern` is in the string `s`
+- Strings can be compared with operators like `<`, but note that this comparison is based on lexicographical order, performing an element by element comparison
+#### The `list` and `tuple` classes
+- `list` and `tuple` classes are general classes that can represent sequences of arbitrary objects. `list` instances are mutable (items can be added/removed/replaced), while tuples are immutable. These two classes are **referential** structures, storing sequences of **references** to objects that are elements of the sequences
+  - See Python documentation for [lists](https://docs.python.org/3/library/stdtypes.html#lists) and [tuples](https://docs.python.org/3/library/stdtypes.html#tuples)
+- You can verify that a list is mutable by using the code sample below, which uses the [`id()`](https://docs.python.org/3/library/functions.html#id) built-in function
+```python
+initial_list = [1, 3, 4]
+list_identity = id(initial_list)
+initial_list.append(4)
+assert initial_list == [1, 2, 3, 4]
+new_identity = id(initial_list)
+assert new_identity == list_identity
+```
+- Lists and tuples support indexing, similar to strings
+
+| List Operator Syntax | Description                                                                                   |
+|----------------------|-----------------------------------------------------------------------------------------------|
+| `s[j]`               | element at index `j`                                                                          |
+| `s[start:stop]`      | slice including elements from index `start` up to but not including `stop`                    |
+| `s[start:stop:step]` | slice including indices `start`, `start+step`, `start+2*step`, up to but not including `stop` |
+| `len(s)`             | the length of the sequence                                                                    |
+| `s + t`              | concatenation of sequences `s` and `t`                                                        |
+| `s * k`              | shorthand for `s + s + ... + s` (repeated `k` times)                                          |
+| `val in s`           | `True` if `val` is an element of the sequence (or substring, when `s` is a string)            |
+| `val not in s`       | more readable form equivalent to `not val in s`                                               |
+| `s == t`             | equivalent (element by element)                                                               |
+| `s != t`             | not equivalent                                                                                |
+| `s < t`              | lexicographically less than                                                                   |
+| `s <= t`             | lexigraphically less than or equal to                                                         |
+| `s > t`              | lexicographically greater than                                                                |
+| `s >= t`             | lexicographically greater than or equal to                                                    |
+- List delimiters are `[]` (which is an empty list) and the `list()` constructor creates an empty list by default. However, you can pass any parameter of an **iterable** type to the constructor
+- Lists support syntax that allows you to replace or delete items at specific indexes
+```python
+ls = [1]
+ls[0] = 2
+assert ls == [2]
+del ls[0]
+assert ls == []
+```
+- Tuple delimiters are `()` (which is an empty tuple). Be careful when using tuples that only contain one value as they need to have a comma after the value, for example `(17, )`
+#### The `set` and `frozenset` classes
+- The **set** class is used to represent a mathematical set (collection of elements) without duplicates and with no inherent order. A big advantage of sets over lists is they are very optimized for checking if an item is present in the set (based on **hash tables**)
+  - See Python documentation [here](https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset)
+- Important to note that sets do not maintain items in any particular order and only and only objects of immutable types (integers, strings, etc.) can be contained in sets
+- Curly braces `{}` are used as set delimiters (ex. `{'red', 'green', 'blue'}`), but note that `{}` does not create an empty set, it creates an empty dictionary, you must use `set()` to create the empty set.
+
+| Set Operator Syntax | Description |
+|---------------------|-------------|
+| `key in s`          | containment check |
+| `key not in s`      | equivalent to `not key in s` |
+| `s1 == s2`          | `s1` is equivalent to `s2` |
+| `s1 != s2`          | `s1` is not equivalent to `s2` |
+| `s1 <= s2`          | s1 is a subset of s2 |
+| `s1 < s2`           | s1 is a proper subset of s2 |
+| `s1 >= s2`          | s1 is a superset of s2 |
+| `s1 > s2`           | s1 is a proper superset of s2 |
+| `s1 \| s2`          | the union of s1 and s2 |
+| `s1 & s2`           | the intersection of s1 and s2 |
+| `s1 - s2`           | the set of elements in s1, but not s2 |
+| `s1 ^ s2`           | the set of elements in precisely one of s1 or s2 |
+- Because sets do not have guaranteed orders, the comparison operators are not lexicographic like for lists, but rather are like the mathematical operators
+#### The `dict` class
+- Python's **dict** class is a dictionary, or mapping, of a set of distinct **keys** to associated **values**. Dictionaries are implemented very similarly to sets, with curly braces `{}` (in this instance, this is the empty dictionary), for example, `{"ga": "Irish", "de": "German"}`. Dictionaries are not inherently ordered
+  - Python documentation [here](https://docs.python.org/3/library/stdtypes.html#dict)
+- Most common behavior of a dictionary is accessing a value associated with a particular key, through `d[k]`
+
+| Dictionary Operator Syntax | Description                                                                                                                         |
+|----------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| `d[key]`                   | value associated with given key                                                                                                     |
+| `d[key] = value`           | set (or reset) the value associated with given key                                                                                  |
+| `del d[key]`               | remove key and its associated value from dictionary                                                                                 |
+| `key in d`                 | containment check                                                                                                                   |
+| `key not in d`             | non-containment check                                                                                                               |
+| `d1 == d2`                 | d1 is equivalent to d2                                                                                                              |
+| `d1 != d2`                 | d1 is not equivalent to d2                                                                                                          |
+| `d1 \| d2`                 | returns a new dictionary including entries from d1 and d2. If a key exists in both d1 and d2, the result includes the entry from d2 |
+#### Extended assignment operators
+- There are some slight differences when using operators like `+=` with mutable collections. The example `primes = primes + [17, 19]` creates a new list on the right hand side of the operator, then reassigns `primes` to the new list. If an alias existed for the original list, that original list would not be updated. However, when actually using the `+=` operator, the original list is mutated
+```python
+numbers = [1, 2, 3, 4]
+numbers_alias = numbers
+assert id(numbers) == id(numbers_alias)
+numbers += [5, 6]
+assert numbers == numbers_alias
+numbers = numbers + [7, 8]
+assert numbers == [1, 2, 3, 4, 5, 6, 7, 8]
+assert numbers_alias == [1, 2, 3, 4, 5, 6]
+```
