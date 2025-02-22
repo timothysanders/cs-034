@@ -427,3 +427,55 @@ def factor_generator(n):             # generator that computes factors
 ```
 - Note that you cannot combine `yield` and `return` to indicate a result (other than a zero argument return, which will cause the generator to end execution)
 - Generators can have multiple `yield` statements, which can be determined by flow of control
+
+### 1.10: Additional Python Conveniences
+#### Conditional expressions
+- Python's **conditional expression** syntax can replace simple control structures and is generally expressed as `expr1 if condition else expr2`
+- This evaluates expr1 if the condition is true, otherwise evaluates expr2
+- these conditional expressions can serve as parameters to functions or can be assigned to variables
+- This should really only be used when it increases the readability of the source code
+#### Comprehension syntax
+- Common programming task is to produce one series of values based on the processing of another series, which can often be accomplished through **comprehension syntax** such as **list comprehensions**
+```python
+# List comprehension format
+n = 5
+squares = [k * k for k in range(1, n + 1)]
+
+# for loop format
+squares = []
+n = 5
+for k in range(1, n + 1):
+    squares.append(k * k)
+```
+- Other comprehension syntax is shown below for sets, generators, and dictionaries
+
+| Syntax                               | Description              |
+|--------------------------------------|--------------------------|
+| `[ k*k for k in range(1, n+1) ]`     | list comprehension       |
+| `{ k*k for k in range(1, n+1) }`     | set comprehension        |
+| `( k*k for k in range(1, n+1) )`     | generator comprehension  |
+| `{ k : k*k for k in range(1, n+1) }` | dictionary comprehension |
+#### Packing and unpacking of sequences
+- Tuples and other sequence types can be treated in a few different ways, the first is excluding the parentheses for a tuple if assigning a comma-separated list of values to a variable, this is called **automatic packing**
+- Conversely, a tuple can be **unpacked**, where you assign a series of identifiers to the elements of a sequence, unpacking can be used with any iterable type
+```python
+# "automatic packing" of a tuple
+data = 2, 4, 6, 8
+assert type(data) == tuple
+
+# "unpacking" of a tuple
+a, b, c, d = data
+assert a == 2
+assert b == 4
+assert c == 6
+assert d ==8
+```
+##### Simultaneous assignments
+- Combining automatic packing and unpacking is a technique known as **simultaneous assignment**. This can be a convenient way to swap the values of two variables, for example, `j, k = k, j`. Without this technique, this swap is more complicated
+```python
+def fibonacci():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a+b
+```
