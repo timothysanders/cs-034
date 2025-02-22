@@ -247,3 +247,45 @@ numbers = numbers + [7, 8]
 assert numbers == [1, 2, 3, 4, 5, 6, 7, 8]
 assert numbers_alias == [1, 2, 3, 4, 5, 6]
 ```
+### 1.5: Control Flow
+- Control structures, such as conditional statements and loops, are delimited by a colon `:` and subsequent lines are indented, which designate the extent of that block of code (similar to how function bodies and class bodies are designated)
+#### Conditionals
+- Conditionals, also called **if statements**, execute a given block of code based on the evaluation of one or more boolean expressions
+```python
+if first_condition:
+    first_body
+elif second_condition:
+    second_body
+elif third_condition:
+    third_body
+else:
+    fourth_body
+```
+- The conditions are all boolean expressions and the bodies are one or more commands to be executed. Once one of the bodies is executed, no further conditions are evaluated or bodies executed.
+- Control structures may be nested, which relies on further indentation
+#### Loops
+- Python has two different looping constructs, a **while loop** and a **for loop**. While loops allow repetition based on repeated testing of a boolean condition, while for loops iterate through values from a defined series
+##### While loops
+- General syntax is as follows, where `condition` can be any boolean expression and the `body` can be any block of code (including nested control structures). If the condition is true, the body is executed, if it is false, the loop is exited
+```python
+while condition:
+    body
+```
+##### For loops
+- For loops can be used on any type of iterable, such as a list, tuple, str, set, dict, or file, general syntax is as follows
+```python
+for element in iteratable:
+    body
+```
+- The loop body executes once for each element in the sequence and the identifier (`element` in this instance) is available within the loop body
+- For loops have simplicity in that you do not need to manage indexes or create boolean conditions
+##### Index-based for loops
+- For loops are nice, but they do not tell you where an element resides in the sequence. If you want to loop through the series of indices of a sequence, use the following
+```python
+data = "string length"
+for j in range(len(data)):
+    print(data[j])
+```
+##### `break` and `continue` statements
+- The `break` statement is used to immediately terminate the loop, if you are using this in nested structures, it will terminate the most immediately enclosing loop
+- The `continue` statement is used to stop the current iteration of the loop, but subsequent iterations will continue as expected
