@@ -322,3 +322,41 @@ def count(data, target):
 - Python supports **keyword arguments** where the actual parameter is explicitly assigned to the formal parameter by name, for example `foo(c=5)`
 #### Python's built-in functions
 - Python has a number of built-in functions that can be found [here](https://docs.python.org/3/library/functions.html)
+
+### 1.7: Simple input and output
+#### Console input and output
+##### The `print` function
+- The `print()` function generates standard output to the console and can be customized through different keyword parameters
+  - `sep`: the desired separating string between each pair of arguments, defaults to " " a single space
+  - `end`: the trailing string to output after the final argument, defaults to a newline
+  - `file`: used to send output to an output file stream
+##### The `input` function
+- The `input()` function is the primary means for getting information from the user console. This function displays a prompt (if specified) then waits until the user enters a sequence of characters, followed by the return key
+- `input()` returns a string of characters, so any type conversions must be done manually, with other functions like `int()`
+##### A sample program
+```python
+age = int(input('Enter your age in years: '))
+max_heart_rate = 206.9 - (0.67 * age)
+target = 0.65 * max_heart_rate
+print(f"Your target max heart rate is {max_heart_rate:.1f}.")
+print(f'Your target fat-burning heart rate is {target:.1f}.')
+```
+#### Files
+- Files are usually accessed through the built-in function `open()`, which takes as parameters the file name and an optional parameter to specify the access mode (read/write/etc.). Common file methods are shown below
+
+| Syntax                  | Description                                                                                                                                                                            |
+|-------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `fp.read()`             | Return the (remaining) contents of a readable file as a string                                                                                                                         |
+| `fp.read(k)`            | Return the next k bytes of a readable file as a string                                                                                                                                 |
+| `fp.readline()`         | Return (remainder of) the current line of a readable file as a string                                                                                                                  |
+| `fp.readlines()`        | Return all (remaining) lines of a readable file as a list of strings                                                                                                                   |
+| `for line in fp:`       | Iterate all (remaining) lines of a readable file                                                                                                                                       |
+| `fp.seek(k)`            | Change the current position to be at the k^th byte of the file                                                                                                                         |
+| `fp.tell()`             | Return the current position, measured as byte-offset from the start                                                                                                                    |
+| `fp.write(string)`      | Write the given string at the current position of the writable file                                                                                                                    |
+| `fp.writelines(seq)`    | Write each of the strings of the given sequence at the current position of the writable file; this command does not insert any newlines, beyond those that are embedded in the strings |
+| `print(..., file = fp)` | Redirect the output of the print function to the file proxy fp                                                                                                                         |
+##### Reading from a file
+- The most basic command for reading from a file is `file.read(k)`, with k being the number of bytes to read. Without k, the entire file will be read. You can use the `readline()` method to get a single line at a time, or `readlines()` will return a list of lines
+##### Writing to a file
+- Text can be written to a file with the `write()` or `writelines()` methods
