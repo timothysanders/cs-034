@@ -402,3 +402,28 @@ except ZeroDivisionError:
 - In an `except` clause, you can use the `raise` statement without any argument to re-raise the same exception that is currently being handled
 - You can use `except:` without specifying any error types to catch any errors, however, this should not be used regularly
 - A try/except statement can also have a `finally` class, which will always be executed. This is often used for cleanup actions, like closing a file
+
+### 1.9: Iterators and Generators
+- Many object types in Python are iterable, such as lists, tuples, and sets. The mechanism for iteration in Python is based on the conventions below
+  - An **iterator** is an object that manages the iteration of a series of values. If `it` is an iterator object, then `next(it)` produces the next value from the series, and a `StopIteration` exception is raised when all elements are processed
+  - An **iterable** is an object that produces an iterator via the syntax `iter(obj)`
+- While instances of objects like lists are not iterators themselves, they are iterable. However, you can create an iterator by using `iter(data)` and then calling `next()` on the iterator will produce the next value 
+- In the study of data structures, we'll explore techniques for supporting iteration, with a key issue being what happens if a collection is modified between when `iter()` is called to create the iterator and when `next()` is called. **Snapshot iterators** ensure that the iterator reports the values of the object at the time it was created, even if the objects have changed
+- Python iterators often use a technique known as **lazy iteration** (as opposed to using a snapshot iterator) where the iterator waits until the next value is called before doing any necessary work. However, if the contents of the data structure of modified while iteration is underway, the iterator will report updated contents of the iterable, as it maintains its state as an index in the original object
+#### Generators
+- The most convenient technique for creating iterators in Python is through the use of **generators**, which is very similar to a function, but instead of return values, a **yield** statement is executed
+```python
+def factor_function(n):               # traditional function that computes factors
+    results = []              # store factors in a new list
+    for k in range(1,n+1):
+        if n % k == 0:        # divides evenly, thus k is a factor
+            results.append(k) # add k to the list of factors
+    return results            # return the entire list
+
+def factor_generator(n):             # generator that computes factors
+    for k in range(1,n+1):
+        if n % k == 0:      # divides evenly, thus k is a factor
+            yield k         # yield this factor as next result
+```
+- Note that you cannot combine `yield` and `return` to indicate a result (other than a zero argument return, which will cause the generator to end execution)
+- Generators can have multiple `yield` statements, which can be determined by flow of control
