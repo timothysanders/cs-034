@@ -286,9 +286,10 @@ data = "string length"
 for j in range(len(data)):
     print(data[j])
 ```
-##### `break` and `continue` statements
+##### `break`, `continue`, and `pass` statements
 - The `break` statement is used to immediately terminate the loop, if you are using this in nested structures, it will terminate the most immediately enclosing loop
 - The `continue` statement is used to stop the current iteration of the loop, but subsequent iterations will continue as expected
+- The `pass` statement does nothing, but can be used syntactically as the body of a control structure, allowing that block to occur with nothing performed
 
 ### 1.6: Functions
 - Functions (which are distinct from methods) are a "traditional, stateless function that is invoked without the context of a particular class or an instance of that class".
@@ -360,3 +361,44 @@ print(f'Your target fat-burning heart rate is {target:.1f}.')
 - The most basic command for reading from a file is `file.read(k)`, with k being the number of bytes to read. Without k, the entire file will be read. You can use the `readline()` method to get a single line at a time, or `readlines()` will return a list of lines
 ##### Writing to a file
 - Text can be written to a file with the `write()` or `writelines()` methods
+
+### 1.8 Exception Handling
+- Exceptions are unexpected events that occur during a program's execution and they may come from logical errors or unanticipated conditions. **Exceptions** (or **errors**) are objects that are **raised** (or **thrown**) by code that runs into unexpected events, like running out of memory. Raised errors may be **caught** by code that *handles* the exception, but if exceptions are uncaught, they will cause the interpreter to stop executing and report the error to the console
+#### Common exception types
+- There are many types of exception classes and the `Exception` class is a base class for most other error types
+
+| Class               | Description                                                                                          |
+|---------------------|------------------------------------------------------------------------------------------------------|
+| `Exception`         | A base class for most error types                                                                    |
+| `AttributeError`    | Raised by syntax obj.foo, if obj has no member named foo                                             |
+| `EOFError`          | Raised if the "end of file" is reached when reading console or file input                            |
+| `IOError`           | Raised upon failure of an input/output operation (such as trying to open a file that does not exist) |
+| `IndexError`        | Raised if an index to a sequence is out of bounds                                                    |
+| `KeyError`          | Raised if a nonexistent key is requested from a set or dictionary                                    |
+| `KeyboardInterrupt` | Raised if the user presses the keys ctrl-c while the program is executing                            |
+| `NameError`         | Raised if a nonexistent identifier is used                                                           |
+| `StopIteration`     | Raised by next(iterator) if no element; see Section 1.9                                              |
+| `TypeError`         | Raised when the wrong type of parameter is sent to a function                                        |
+| `ValueError`        | Raised when a parameter has an invalid value (e.g., sqrt(-5))                                        |
+| `ZeroDivisionError` | Raised when any operator related to division is used with 0 as the divisor                           |
+#### Raising an exception
+- An exception can be thrown/raised using the `raise` statement, along with the instance of an exception class that addresses the problem, for example `raise ValueError("x cannot be negative")`. The syntax raises a new instance of the ValueError class, and the error message is a parameter to the constructor. If the exception is not caught, it will continue propagating up to broader contexts
+- If checking validity of parameters, it is common to verify that parameters are of the correct type first using `isinstance(obj, cls)`, then to verify an appropriate value
+- How much error-checking to perform in functions is debatable, adding type and value checks for every parameter adds execution time and can muddle the code
+#### Catching an exception
+- One strategy for managing exception cases is **"look before you leap"**, where validations are performed proactively to avoid exceptions
+- Another strategy is **"it is easier to ask for forgiveness than it is to get permission"**, where we do not spend extra time safeguarding against every possible exception case, as long as we can handle problems after they arise. This is implemented with the **try-except** control structure
+```python
+try:
+    ratio = x / y
+except ZeroDivisionError:
+    error_handling
+```
+- The `try` block is the primary code, which is followed by one or more `except` cases, that can define logic for different types of exceptions
+- Exception handling is very useful when working with user input, or reading/writing files, as these interactions are often less predictable
+- You can also use `except ZeroDivisionError as e`, where `e` is the instance of the thrown exception, which then can be utilized in the handling block
+- Can also use `except (ValueError, EOFError)` to handle multiple types of exceptions within the single except clause
+- Multiple `except` clauses can be used if different errors should be handled differently
+- In an `except` clause, you can use the `raise` statement without any argument to re-raise the same exception that is currently being handled
+- You can use `except:` without specifying any error types to catch any errors, however, this should not be used regularly
+- A try/except statement can also have a `finally` class, which will always be executed. This is often used for cleanup actions, like closing a file
