@@ -289,3 +289,36 @@ for j in range(len(data)):
 ##### `break` and `continue` statements
 - The `break` statement is used to immediately terminate the loop, if you are using this in nested structures, it will terminate the most immediately enclosing loop
 - The `continue` statement is used to stop the current iteration of the loop, but subsequent iterations will continue as expected
+
+### 1.6: Functions
+- Functions (which are distinct from methods) are a "traditional, stateless function that is invoked without the context of a particular class or an instance of that class".
+  - Method is used to describe a member function that is invoked upon a specific object using object-oriented dot-notation syntax (ex. `data.sort()`)
+```python
+# basic function definition syntax
+def count(data, target):
+    n = 0
+    for item in data:
+        if item == target:
+            n += 1
+    return n
+```
+- The first line, which begins with `def` is the function's **signature**, which gives a new identifier and the parameters. As Python is dynamically typed, parameter types do not have to be specified, nor the return type (though you should). These types should be stated in the function documentation though and can be enforced in the function itself
+- The rest of the function is called the **body** and is usually an indented block of code
+- When a function is called, an **activation record** is created for the current call. This includes the **namespace** to manage all identifiers with **local scope**, such as the function parameters or other identifiers defined within the function. Note that identifiers in the scope of the function call have no relation to any identifier with the same name in the calling scope
+#### `return` statement
+- The `return` statement is used to tell the function to cease execution immediately and return a value to the caller. If `return` is executed without an explicit value, it will return the `None` value (also if a function completes without executing a `return` statement)
+- Multiple return statements can be defined in a function, but only one will ever be executed
+#### Information passing
+- The identifiers for expected parameters specified in the function signature are known as **formal parameters** and the objects that are sent by the caller when invoking the function are **actual parameters**. Parameter passing in Python follows the standard **assignment statement** semantics. When the function is called, each formal parameter is assigned to the respective actual parameter provided by the caller, in the context of the function's local scope
+- The return value from the function to the caller also is implemented as an assignment.
+- One advantage to this method of information passing is that objects are not copied
+##### Mutable parameters
+- Need to exercise caution when modifying mutable parameters as a part of a function, you cannot change the caller's variable through an assignment statement within the function
+##### Default parameter values
+- Python allows for functions to have more than one possible calling signature, these functions are referred to as **polymorphic**. To achieve this, functions can declare default formal parameters, which allows a caller to specify varying numbers of actual parameters. If you define one parameter as having a default in your function signature, all parameters following it must also have a default value
+  - An example of this is Python's `range()` function. You can call it as `range(n)`, `range(start, stop)`, or `range(start, stop, step)`
+##### Keyword parameters
+- Traditionally, matching actual parameters sent by the caller to formal parameters declared by the function is through **positional arguments**, meaning the order of the actual parameters is matched with the order of the formal parameters, and values are assigned accordingly.
+- Python supports **keyword arguments** where the actual parameter is explicitly assigned to the formal parameter by name, for example `foo(c=5)`
+#### Python's built-in functions
+- Python has a number of built-in functions that can be found [here](https://docs.python.org/3/library/functions.html)
