@@ -488,3 +488,56 @@ def fibonacci():
 - **First-class objects** are types of objects that can be assigned to an identifier, passed as a parameter, or returned by a function. Data types (such as int, str, etc.) are first class objects, as well as functions and classes.
 
 ### 1.12 Modules and the import statement
+- There are approximately 130-150 definitions that are included in Python's built-in namespace, but beyond that, there are thousands of other values, functions, and classes that are organized into libraries, known as **modules**, which can be **imported** into a program. Python's **import** statement loads modules into the current namespace can be used in a few different ways
+```python
+# import syntax examples
+from math import pi, sqrt
+
+from math import *
+
+import math
+```
+#### Creating a new module
+- To create a module, you just have to put functions into a file named with the **.py** suffix, which can then be imported like any other module
+- Top-level commands with the module source code are executed when the module is first imported, but there is a way to embed commands that will only be executed if the module is directly invoked, not when it is imported. This approach can often be used to embed **unit tests** within the module itself
+```python
+if __name__ == "__main__":
+    "code block goes here"
+```
+#### Existing modules
+- There are a number of modules that are relevant to data structures and algorithms
+
+| Module        | Description                                                                                   |
+|---------------|-----------------------------------------------------------------------------------------------|
+| `array`       | Provides compact array storage for primitive types                                            |
+| `collections` | Defines additional data structures and abstract base classes involving collections of objects |
+| `copy`        | Defines general functions for making copies of objects (see Section 2.6)                      |
+| `heapq`       | Provides heap-based priority queue functions                                                  |
+| `math`        | Defines common mathematical constants and functions                                           |
+| `os`          | Provides support for interactions with the operating system                                   |
+| `random`      | Provides random number generation                                                             |
+| `re`          | Provides support for processing regular expressions                                           |
+| `sys`         | Provides additional level of interaction with the Python interpreter                          |
+| `time`        | Provides support for measuring time, or intentionally delaying a program                      |
+##### Pseudorandom number generation
+- The `random` module in Python provides the ability to generate pseudorandom numbers, which are numbers that are statistically random, but not necessarily truly random. **Pseudorandom number generator** uses a deterministic formula to generate the next number in a sequence based on one or more past numbers. A sample pseudorandom number generate is as follows
+```python
+# choose next number based on most recently chosen number
+a = 3
+b = 4
+n = 7
+cur = 2
+next = (a * cur + b) % n
+```
+- Python uses a technique known as [**Mersenne twister**](https://en.wikipedia.org/wiki/Mersenne_Twister), but this should not be utilized in an application where on needs truly unpredictable random sequences. Instead, use something like sample radio static coming from outer space..
+- As a pseudorandom number generator is determined by the previous number(s), the generator needs a place to start, called a **seed**. The sequence of numbers generated from a seed will always be the same
+- Python's `random` module provides support for pseudorandom number generation by defining the `Random` class, this allows different parts of the application to create their own pseudorandom number generation. The functions/methods shown in the table below are top-level functions in the `random` module and methods supported by the `Random` class
+
+| Syntax                       | Description                                                                             |
+|------------------------------|-----------------------------------------------------------------------------------------|
+| `seed(hashable)`             | Initialize the pseudorandom number generator based upon the hash value of the parameter |
+| `random()`                   | Return a pseudorandom floating-point value in the interval [0.0, 1.0)                   |
+| `randint(a,b)`               | Return a pseudorandom integer in the closed interval $[a, b]$ for parameters $a \leq b$ |
+| `randrange(start,stop,step)` | Return a pseudorandom integer in the standard Python range indicated by the parameters  |
+| `choice(seq)`                | Return an element of the given sequence chosen pseudorandomly                           |
+| `shuffle(seq)`               | Reorder the elements of the given sequence pseudorandomly                               |
