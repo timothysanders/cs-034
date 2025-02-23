@@ -541,3 +541,14 @@ next = (a * cur + b) % n
 | `randrange(start,stop,step)` | Return a pseudorandom integer in the standard Python range indicated by the parameters  |
 | `choice(seq)`                | Return an element of the given sequence chosen pseudorandomly                           |
 | `shuffle(seq)`               | Reorder the elements of the given sequence pseudorandomly                               |
+
+### 1.13: Exercises
+- Write a short Python function, `is_multiple(n, m)` that takes two integer values and returns `True` if $n$ is a multiple of $m$ (that is, if $n = m \cdot i$ for some integer $i$), and `False` otherwise
+
+### 1.14: Chapter notes
+- Additional references
+  - Mark Lutz - "Learning Python" and "Programming Python"
+  - John Zelle - "Python Programming: An Introduction to Computer Science"
+  - David Beazley - "Python Essential Reference"
+  - Mark Summerfield - "Python in Practice" and "Programming in Python 3"
+  - Ljiljana Perkovic - "Introduction to Computing Using Python"
