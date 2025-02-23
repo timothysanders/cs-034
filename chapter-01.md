@@ -479,3 +479,12 @@ def fibonacci():
         yield a
         a, b = b, a+b
 ```
+
+### 1.11: Scopes and Namespaces
+- The process of determining values that are associated with each identifier is called **name resolution**. When an identifier is assigned to a value, the definition is made within a specific **scope**. Top-level assignments are usually made in what is called the **global** scope and assignments within a function have a scope that is **local** to the function call. Scope are represented using a **namespace**, which manages all identifiers that are currently defined in a given scope. Python gives each namespace its own dictionary that makes identifiers to their associated values. The function `dir()` reports the names of identifiers in a given namespace, while `vars()` returns the entire dictionary
+- When an identifier is referenced, the most local namespace is searched first, followed by the next outer scope, etc.
+- Each object has its own namespace and classes each have their own namespace as well
+#### First-class objects
+- **First-class objects** are types of objects that can be assigned to an identifier, passed as a parameter, or returned by a function. Data types (such as int, str, etc.) are first class objects, as well as functions and classes.
+
+### 1.12 Modules and the import statement
