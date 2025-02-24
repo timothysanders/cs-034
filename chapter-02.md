@@ -38,3 +38,317 @@
   - Template method
   - Locator
   - Factory method
+
+### 2.2: Software development
+- Traditional software development involves three major phases, design, implementation, and testing/debugging
+#### Design
+- The design phase is perhaps the most important phases of the process, where we decide how the workings of our program will be grouped into classes, how the classes will interact, what data they'll store, and what actions each will take. Some general rules of thumb that can be used when determining how to design classes
+  - **Responsibilities**: divide work into different **actors**, each with a different responsibility, and describe the responsibilities using action verbs. These actors can become the classes for a program
+  - **Independence**: define the work of each class as independent from other classes as possible, with each class having autonomy over some part of the program. Data should be allocated to the class (as instance variables) that has jurisdiction over the actions that require access to this data
+  - **Behaviors**: define behaviors for each class carefully and precisely, these behaviors will define the methods each class performs. The set of methods for a class are its **interface** and are how other classes will interact
+- Common tool for initial high-level design for a project is **Class-Responsibility-Collaborator (CRC)** cards, which are index cards that subdivide work of a program. Each card represents a component, which will ultimately become a class. Each card has the name of the component on top, the left-hand side has the written responsibilities of the component, on the right hand side, list the collaborators for the component (other components that this one will have to interact with). This goes through the action/actor cycle, where we identify actions, then determine an actor best suited for the action. 
+- A standard approach to explain and document program design is **Unified Modeling Language (UML)**, which are standard visual notation to show the organization of object-oriented software design. There are a number of tools available for creating UML diagrams (such as draw.io), with one type of UML figure being a class diagram
+- The class diagram below has three sections, the first with the name of the class, the second the recommended instance variables, and the third the recommended methods
+```mermaid
+classDiagram
+    class CreditCard {
+        -_customer
+        -_bank
+        -_account
+        -_balance
+        -_limit
+        +get_customer()
+        +get_bank()
+        +get_account()
+        +get_balance()
+        +get_limit()
+        +charge(price)
+        +make_payment(amount)
+    }
+```
+#### Pseudocode
+- A way to describe algorithms in human language is called **pseudocode**, which is not a computer program, but more like very structured prose. It is not meant for computer usage, but rather for reading by a human
+#### Coding style and documentation
+- Programs should be easy to read and understand, so programmers should be mindful of the coding style they use. A good start is to use [PEP 8](https://peps.python.org/pep-0008/). A few main principles are helpful
+  - Use four spaces for indentation, avoid tabs
+  - Use meaningful names for identifiers
+    - Classes should have a name with a singular noun (`Date` vs `Dates`) and should be CamelCase
+    - Functions should be lowercase, with words separated by underscores
+    - Names that identify an individual object should be lowercase, separated by underscores
+    - Identifiers for a constant should be all capital letters (ex. `MAX_SIZE`)
+    - Identifiers meant for "internal" use should be prefixed with an underscore
+  - Use comments that add meaning and explain ambiguous or confusing constructs
+#### Documentation
+- Python supports adding formal documentation directly into source code via a **docstring**. By convention, these are triple quoted strings
+- Docstrings are stored as a field of a module, function, or class where they are defined, and can be accessed with `help(x)`
+- A good, widely used standard for docstrings is the Numpy docstring [standard](https://numpydoc.readthedocs.io/en/latest/format.html)
+#### Testing and Debugging
+- Testing is the process of experimentally checking the correctness of a program, while debugging is tracking the execution of a program and finding errors in it. These are often quite time-consuming activities in the development of a program
+##### Testing
+- Careful testing plan is essential when writing a program and we should aim to execute a representative subset of inputs for our program, at a minimum testing each method at least once.
+- Programs often fail on **special cases** (or edge cases/corner cases) of input, so these should be carefully identified and tested. What happens if an input is empty? What if a number is negative? etc. etc.
+- If possible, one should try and run the program on a large assortment of randomly generated inputs, the `random` module can provide help in generating these inputs
+- Two main testing strategies, *top-down* and *bottom-up* testing
+  - **Top-down testing**: proceeds from top to bottom of program hierarchy, typically used in conjunction with **stubbing** where lower level components are replaced with a **stub**, which simulates that components functionality
+  - **Bottom-up testing**: proceeds from lower-level components to higher-level components, with bottom-level components that do not have dependencies being tested first, then proceeding upward. This is often called **unit testing**, as specific components are tested in isolation from the larger program
+- Python supports several forms of unit testing, such as through the `unittest` module (or use [`pytest`](https://docs.pytest.org/en/stable/)). As software is continually developed, these tests can be maintained, acting as **regression tests**, which help ensure that previously working functionality does not break
+##### Debugging
+- Simple debugging technique is to use print statements to inspect values at various points of execution, but can also use a debugger with the insertion of breakpoints in the code. This allows you to inspect the values of variables at different points in the program's execution.
+
+### 2.3: Class definitions
+- Classes are the primary means of abstraction in object-oriented programming, where every piece of data is an instance of a class. Classes have defined sets of behaviors in the form of **member functions** (or methods), which are common to all instances of that class. Classes are blueprints for each instance, with each instance having defined **attributes**
+```python
+# Example class definition
+class CreditCard:
+    """A consumer credit card."""
+    
+    def __init__(self, customer, bank, acnt, limit):
+        """Create a new credit card instance.
+    
+        The initial balance is zero.
+        
+        Attributes
+        ----------
+        customer
+            the name of the customer (e.g., 'John Bowman')
+        bank
+            the name of the bank (e.g., 'California Savings')
+        acnt
+            the account identifier (e.g., '5391 0375 9387 5309')
+        limit
+            credit limit (measured in dollars)
+        """
+        self._customer = customer
+        self._bank = bank
+        self._account = acnt
+        self._limit = limit
+        self._balance = 0
+  
+    def get_customer(self):
+        """Return name of the customer."""
+        return self._customer
+      
+    def get_bank(self):
+        """Return the bank's name."""
+        return self._bank
+  
+    def get_account(self):
+        """Return the card's identifying number (typically stored as a string)."""
+        return self._account
+  
+    def get_limit(self):
+        """Return current credit limit."""
+        return self._limit
+  
+    def get_balance(self):
+        """Return current balance."""
+        return self._balance
+
+    def charge(self, price):
+        """Charge the given price to the card, assuming sufficient credit limit.
+
+        Return True if charge was processed; False if charge was denied.
+        """
+        if price + self._balance > self._limit:    # if charge would exceed limit,
+            return False                           # cannot accept charge
+        else:
+            self._balance += price
+            return True
+
+    def make_payment(self, amount):
+        """Process customer payment, which reduces balance."""
+        self._balance -= amount
+
+
+if __name__ == '__main__':
+    primary_card = CreditCard('John Bowman', 'California Savings', '5391 0375 9387 5309', 2500)
+    rewards_card = CreditCard('John Bowman', 'California Federal', '3485 0399 3395 1954', 3500)
+
+    if primary_card.get_bank() != 'California Savings':
+        print('Problem with recording of bank')
+    if rewards_card.get_bank() != 'California Federal':
+        print('Problem with recording of bank')
+
+    if not rewards_card.charge(1000):
+        print('Initial charge of $1000 should not be rejected')
+    if rewards_card.get_balance() != 1000:
+        print('Problem with balance')
+    rewards_card.charge(2000)
+    if rewards_card.get_balance() != 3000:
+        print('Problem with balance')
+
+    # try going over the credit limit
+    if rewards_card.charge(1000):
+        print('Charge should have been denied')
+    if rewards_card.get_balance() != 3000:
+        print('Failed charge should not have impacted balance')
+
+    if primary_card.get_balance() != 0:
+        print('Problem as primary card should still have zero balance.')
+```
+##### The `self` identifier
+- The `self` identifier refers to the instance of the class upon which the method is invoked. `self` appears as the first formal parameter in the declaration of each method (unless it is a static method). Python automatically binds `self` with the instance of the class and `self` must be prefixed when accessing any *instance variables*
+##### The constructor
+- The `__init__` method is the **constructor** of the class (note the two underscores at the beginning and at the end). The constructor's main responsibility is to establish the newly created instance of the class with the appropriate instance variables
+##### Encapsulation
+- As a general rule, we can treat instance variables as nonpublic, which helps us enforce consistent state for all instances. We can provide accessors (such as `get_balance()`) or update methods to allow users to get or set instance variables
+##### Error checking
+- The example above does not include type checking or value checking, which leaves it very susceptible to incorrect data and consequently, it is not particularly robust
+##### Testing the class
+- Some basic tests can be defined for the class, as shown above, but they do not have wide coverage of all methods or statements. Further attention should be paid to testing this class
+#### Operator overloading and Python's special methods
+- Python's built-in classes provide semantics for many operators (ex. `a + b` which does addition for numeric types, but concatenation for strings). If we are defining a new class, we need to consider if that syntax should be defined explicitly
+- You can provide a definition of this operator by using **operator overloading**, which, in this instance, is done by implementing a specially named method, `__add__`. 
+##### Non-operator overloads
+- In addition to traditional operator overloading, Python supports other specially named methods to control behaviors in specific situations. For example, what should your class do if someone calls `str(class)`? This can be defined through `class.__str__()` and similar methods are used for `int`, `float`, and `bool` conversions, along with other built-in functions like `len()` through the `class.__len__()` method
+##### Implied methods
+- Generally, if a particular special method is not implemented in a user-defined class, the standard syntax will raise an exception. However, some operators (such as `__bool__`) have default semantics so that every object other than `None` will return `True`
+
+| Overloaded Operation Syntax | Special method form                                  |
+|-----------------------------|------------------------------------------------------|
+| a + b                       | a.__add__(b); alternatively, b.__radd__(a)           |
+| a - b                       | a.__sub__(b); alternatively, b.__rsub__(a)           |
+| a * b                       | a.__mul__(b); alternatively, b.__rmul__(a)           |
+| a / b                       | a.__truediv__(b); alternatively, b.__rtruediv__(a)   |
+| a // b                      | a.__floordiv__(b); alternatively, b.__rfloordiv__(a) |
+| a % b                       | a.__mod__(b); alternatively, b.__rmod__(a)           |
+| a ** b                      | a.__pow__(b); alternatively, b.__rpow__(a)           |
+| a << b                      | a.__lshift__(b); alternatively, b.__rlshift__(a)     |
+| a >> b                      | a.__rshift__(b); alternatively, b.__rrshift__(a)     |
+| a & b                       | a.__and__(b); alternatively, b.__rand__(a)           |
+| a ^ b                       | a.__xor__(b); alternatively, b.__rxor__(a)           |
+| a \| b                      | a.__or__(b); alternatively, b.__ror__(a)             |
+| a += b                      | a.__iadd__(b)                                        |
+| a -= b                      | a.__isub__(b)                                        |
+| a *= b                      | a.__imul__(b)                                        |
+| ...                         | ...                                                  |
+| +a                          | a.__pos__()                                          |
+| -a                          | a.__neg__()                                          |
+| ~a                          | a.__invert__()                                       |
+| abs(a)                      | a.__abs__()                                          |
+| a < b                       | a.__lt__(b)                                          |
+| a <= b                      | a.__le__(b)                                          |
+| a > b                       | a.__gt__(b)                                          |
+| a >= b                      | a.__ge__(b)                                          |
+| a == b                      | a.__eq__(b)                                          |
+| a != b                      | a.__ne__(b)                                          |
+| v in a                      | a.__contains__(v)                                    |
+| a[k]                        | a.__getitem__(k)                                     |
+| a[k] = v                    | a.__setitem__(k,v)                                   |
+| del a[k]                    | a.__delitem__(k)                                     |
+| a(arg1, arg2, ...)          | a.__call__(arg1, arg2, ...)                          |
+| len(a)                      | a.__len__()                                          |
+| hash(a)                     | a.__hash__()                                         |
+| iter(a)                     | a.__iter__()                                         |
+| next(a)                     | a.__next__()                                         |
+| bool(a)                     | a.__bool__()                                         |
+| float(a)                    | a.__float__()                                        |
+| int(a)                      | a.__int__()                                          |
+| repr(a)                     | a.__repr__()                                         |
+| reversed(a)                 | a.__reversed__()                                     |
+| str(a)                      | a.__str__()                                          |
+
+#### Example: Multidimensional vector class
+```python
+class Vector:
+    """Represent a vector in a multidimensional space."""
+  
+    def __init__(self, d):
+        """Create d-dimensional vector of zeros."""
+        self._coords = [0] * d
+  
+    def __len__(self):
+        """Return the dimension of the vector."""
+        return len(self._coords)
+  
+    def __getitem__(self, j):
+        """Return jth coordinate of vector."""
+        return self._coords[j]
+  
+    def __setitem__(self, j, val):
+        """Set jth coordinate of vector to given value."""
+        self._coords[j] = val
+  
+    def __add__(self, other):
+        """Return sum of two vectors."""
+        if len(self) != len(other):                   # relies on __len__ method
+            raise ValueError('dimensions must agree')
+        result = Vector(len(self))                    # start with vector of zeros
+        for j in range(len(self)):
+            result[j] = self[j] + other[j]
+        return result
+  
+    def __eq__(self, other):
+        """Return True if vector has same coordinates as other."""
+        return self._coords == other._coords
+  
+    def __ne__(self, other):
+        """Return True if vector differs from other."""
+        return not self == other                      # rely on existing __eq__ definition
+  
+    def __str__(self):
+        """Produce string representation of vector."""
+        return '<' + str(self._coords)[1:-1] + '>'    # adapt list representation
+```
+#### Iterators
+- An **iterator** for a collection supports a special method `__next__` which returns the next element of the collection, or raises `StopIteration` if there are no further elements
+- One does not often directly implement iterators, but typically will implement a **generator**
+- Python provides a default automatic iterator implementation for any class that defines both `__len__` and `__getitem__`
+```python
+class SequenceIterator:
+    """An iterator for any of Python's sequence types."""
+  
+    def __init__(self, sequence):
+        """Create an iterator for the given sequence."""
+        self._seq = sequence            # keep a reference to the underlying data
+        self._k = -1                    # will increment to 0 on first call to next
+  
+    def __next__(self):
+        """Return the next element, or else raise StopIteration error."""
+        self._k += 1                    # advance to next index
+        if self._k < len(self._seq):
+            return(self._seq[self._k])  # return the data element
+        else:
+            raise StopIteration()       # there are no more elements
+  
+    def __iter__(self):
+        """By convention, an iterator must return itself as an iterator."""
+        return self
+```
+#### Example: `OurRange` class
+```python
+class OurRange:
+    """A class that mimic's the built-in range class."""
+  
+    def __init__(self, start, stop=None, step=1):
+        """Initialize an OurRange instance.
+    
+        Semantics are similar to the built-in range class.
+        """
+        if step == 0:
+            raise ValueError('step cannot be 0')
+          
+        if stop is None:                  # special case of OurRange(n)
+            start, stop = 0, start        # should be treated as if OurRange(0,n)
+    
+        # calculate the effective length once
+        self._length = max(0, (stop - start + step - step/abs(step)) // step)
+    
+        # need knowledge of start and step (but not stop) to support __getitem__
+        self._start = start
+        self._step = step
+  
+    def __len__(self):
+        """Return number of entries in the range."""
+        return self._length
+  
+    def __getitem__(self, k):
+        """Return entry at index k (using standard interpretation if negative)."""
+        if k < 0:
+            k += len(self)                # attempt to convert negative index
+    
+        if not 0 <= k < self._length:
+            raise IndexError('index out of range')
+    
+        return self._start + k * self._step
+```
