@@ -352,3 +352,197 @@ class OurRange:
     
         return self._start + k * self._step
 ```
+
+### 2.4: Inheritance
+- Natural way to structure components of software is in a **hierarchical** manner, similar abstractions are grouped together in a way that goes from specific to more general
+- ![Hierarchy example](images/figure-2.4.1.png)
+- In the example shown, `House` is a subset of `Building` and is a superset of `Ranch`. Relationships between hierarchy levels are often referred to as **"is a" relationship** (ex. "house is a building", etc.)
+- In software development, common functionality can be grouped at the most general level, in OOP, the mechanism of modular/hierarchical organization is called **inheritance**. New classes (commonly called **derived class**, **child class**, or **subclass**) can be defined based upon an existing class (commonly called **base class**, **parent class**, or **superclass**). When using inheritance, the subclass automatically includes all methods from the superclass and all fields (presuming the superclass constructor is called).
+- Subclasses may differentiate/**specialize** existing behaviors by **overriding** (providing a new implementation) an existing method or **extend** the superclass by adding new methods
+#### Python's exception hierarchy
+- Another example of inheritance is with Exceptions in Python. A number of subclasses of `BaseException` have already been defined, though you can define your own exceptions as needed (should create them as a child class of `Exception`)
+- ![Portion of Exception hierarchy](images/figure-2.4.2.png)
+#### Extending the `CreditCard` class
+```mermaid
+classDiagram
+    CreditCard <|-- PredatoryCreditCard
+    
+    class CreditCard {
+        -_customer
+        -_bank
+        -_account
+        -_balance
+        -_limit
+        +get_customer()
+        +get_bank()
+        +get_account()
+        +get_balance()
+        +get_limit()
+        +charge(price)
+        +make_payment(amount)
+    }
+    
+    class PredatoryCreditCard {
+        -_apr
+        +process_month()
+        +charge(price)
+    }
+```
+- In our example, the new subclass `PredatoryCreditCard` specializes its superclass by overriding the `charge()` method. A code example of this implementation is shown below. The mechanism for calling the inherited instructor is `super().__init__()`, which calls the constructor from the CreditCard superclass. We also use `super()` to call the `charge()` method from the `CreditCard` parent class, but we add additional logic to assess a penalty if the charge is not successful. The `process_month()` method does not inherit anything, therefore we define it as normal
+```python
+class PredatoryCreditCard(CreditCard):
+    """An extension to CreditCard that compounds interest and penalties."""
+    
+    def __init__(self, customer, bank, acnt, limit, apr):
+        """Create a new predatory credit card instance.
+    
+        The initial balance is zero.
+    
+        customer  the name of the customer (e.g., 'John Bowman')
+        bank      the name of the bank (e.g., 'California Savings')
+        acnt      the account identifier (e.g., '5391 0375 9387 5309')
+        limit     credit limit (measured in dollars)
+        apr       annual percentage rate (e.g., 0.0825 for 8.25% APR)
+        """
+        super().__init__(customer, bank, acnt, limit)  # call super constructor
+        self._apr = apr
+  
+    def charge(self, price):
+        """Charge given price to the card, assuming sufficient credit limit.
+    
+        Return True if charge was processed.
+        Return False and assess $5 penalty if charge is denied.
+        """
+        success = super().charge(price)          # call inherited method
+        if not success:
+            self._balance += 5                   # assess penalty
+        return success                           # caller expects return value
+  
+    def process_month(self):
+        """Assess monthly interest on outstanding balance."""
+        if self._balance > 0:
+            # if positive balance, convert APR to monthly multiplicative factor
+            monthly_factor = pow(1 + self._apr, 1/12)
+            self._balance *= monthly_factor
+```
+##### Protected members
+- In our subclass, we are accessing `self._balance`, which we have described as an attribute that is nonpublic. However, since we are creating a subclass, we can draw a distinction between **protected** and **private**. **Protected** members are available to the subclasses, but not the public, while a **private** member is not accessible to either. Of course, Python does not support formal access control, but a convention is to use one underscore for protected and two underscores for private. We have to be cautious in using these members though, as we have now created a dependency that may break if the CreditCard class is updated
+#### Hierarchy of numeric progressions
+- Another example of inheritance is a hierarchy of classes for iterating through numeric progressions. Our base class `Progression` is meant to provide as much common functionality as possible
+- ![Progression classes](images/figure-2.4.4.png)
+- The `Progression` class implements an *iterator*, specifically with `__next__` and `__iter__`
+```python
+class Progression:
+    """Iterator producing a generic progression.
+  
+    Default iterator produces the whole numbers 0, 1, 2, ...
+    """
+  
+    def __init__(self, start=0):
+        """Initialize current to the first value of the progression."""
+        self._current = start
+  
+    def _advance(self):
+        """Update self._current to a new value.
+    
+        This should be overridden by a subclass to customize progression.
+    
+        By convention, if current is set to None, this designates the
+        end of a finite progression.
+        """
+        self._current += 1
+  
+    def __next__(self):
+        """Return the next element, or else raise StopIteration error."""
+        if self._current is None:    # our convention to end a progression
+            raise StopIteration()
+        else:
+            answer = self._current   # record current value to return
+            self._advance()          # advance to prepare for next time
+            return answer            # return the answer
+  
+    def __iter__(self):
+        """By convention, an iterator must return itself as an iterator."""
+        return self                  
+  
+    def print_progression(self, n):
+        """Print next n values of the progression."""
+        print(' '.join(str(next(self)) for j in range(n)))
+
+class ArithmeticProgression(Progression):    # inherit from Progression
+    """Iterator producing an arithmetic progression."""
+    
+    def __init__(self, increment=1, start=0):
+        """Create a new arithmetic progression.
+    
+        increment  the fixed constant to add to each term (default 1)
+        start      the first term of the progression (default 0)
+        """
+        super().__init__(start)              # initialize base class
+        self._increment = increment
+  
+    def _advance(self):                      # override inherited version
+        """Update current value by adding the fixed increment."""
+        self._current += self._increment
+
+class GeometricProgression(Progression):   # inherit from Progression
+    """Iterator producing a geometric progression."""
+    
+    def __init__(self, base=2, start=1):
+        """Create a new geometric progression.
+
+        base       the fixed constant multiplied to each term (default 2)
+        start      the first term of the progression (default 1)
+        """
+        super().__init__(start)
+        self._base = base
+  
+    def _advance(self):                      # override inherited version
+        """Update current value by multiplying it by the base value."""
+        self._current *= self._base
+
+class FibonacciProgression(Progression):
+    """Iterator producing a generalized Fibonacci progression."""
+    
+    def __init__(self, first=0, second=1):
+        """Create a new fibonacci progression.
+    
+        first      the first term of the progression (default 0)
+        second     the second term of the progression (default 1)
+        """
+        super().__init__(first)              # start progression at first
+        self._prev = second - first          # fictitious value preceding the first
+  
+    def _advance(self):
+        """Update current value by taking sum of previous two."""
+        self._prev, self._current = self._current, self._prev + self._current
+
+if __name__ == '__main__':
+    print('Default progression:')
+    Progression().print_progression(10)
+  
+    print('Arithmetic progression with increment 5:')
+    ArithmeticProgression(5).print_progression(10)
+  
+    print('Arithmetic progression with increment 5 and start 2:')
+    ArithmeticProgression(5, 2).print_progression(10)
+  
+    print('Geometric progression with default base:')
+    GeometricProgression().print_progression(10)
+  
+    print('Geometric progression with base 3:')
+    GeometricProgression(3).print_progression(10)
+  
+    print('Fibonacci progression with default start values:')
+    FibonacciProgression().print_progression(10)
+    
+    print('Fibonacci progression with start values 4 and 6:')
+    FibonacciProgression(4,6).print_progression(10)
+```
+##### An arithmetic progression class
+- An arithmetic progression adds a fixed constant to one term of the progression to produce the next. The `ArithmeticProgression` constructor (see above) calls the `super().__init__()` constructor and establishes an `_increment` attribute. We also override the `_advance()` method to appropriately increment our sequence.
+##### A geometric progression class
+- A geometric progression is one in which each value is produced by multiplying the previous value by a fixed constant (called the **base**). The starting point is typically 1. Similar to our `ArithmeticProgression` class, we call `super().__init__()` and set an attribute `_base`, along with overriding the `_advance()` method.
+##### A Fibonnaci progression class
+- A **Fibonnaci progression* is the sum of the two most recent values (ex. 0, 1, 1, 2, 3, 5, 8, ...). Our class introduces a new attribute `_prev` to store the value prior to the `_current` value. Our constructor expects the first and second values of the progression, with those we can set our `_prev` and `_current` values
+#### Abstract base classes
