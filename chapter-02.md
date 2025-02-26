@@ -546,3 +546,105 @@ if __name__ == '__main__':
 ##### A Fibonnaci progression class
 - A **Fibonnaci progression* is the sum of the two most recent values (ex. 0, 1, 1, 2, 3, 5, 8, ...). Our class introduces a new attribute `_prev` to store the value prior to the `_current` value. Our constructor expects the first and second values of the progression, with those we can set our `_prev` and `_current` values
 #### Abstract base classes
+- **Abstract base classes** can help avoid repetition of code, these base classes can be inherited by other classes, but cannot be directly instantiated. A class that can be instantiated is a **concrete class**. Python supports these abstract base classes through the `abc` module and the `collections.abc` module has multiple abstract base classes that can assist us in building custom data structures. These collections abstract base classes rely on a software design pattern called the **template method pattern**, which is when an abstract base class provides concrete behaviors that rely on calls to other abstract behaviors. Then when a subclass provides definitions for the missing abstract behaviors, the inherited concrete behaviors are well-defined.
+- The `collections.abc.Sequence` ABC has behaviors common to `list`, `str`, and `tuple`, and also provides concrete implementations of methods `count`, `index`, and `__contains__`, as long as the inheriting class implements `__len__` and `__getitem__`
+```python
+from abc import ABCMeta, abstractmethod           # need these definitions
+
+class Sequence(metaclass=ABCMeta):
+    """Our own version of collections.abc.Sequence abstract base class."""
+  
+    @abstractmethod
+    def __len__(self):
+        """Return the length of the sequence."""
+  
+    @abstractmethod
+    def __getitem__(self, j):
+        """Return the element at index j of the sequence."""
+  
+    def __contains__(self, val):
+        """Return True if val found in the sequence; False otherwise."""
+        for j in range(len(self)):
+            if self[j] == val:                    # found match
+                return True
+        return False
+  
+    def index(self, val):
+        """Return leftmost index at which val is found (or raise ValueError)."""
+        for j in range(len(self)):
+            if self[j] == val:                    # leftmost match
+                return j
+        raise ValueError('value not in sequence') # never found a match
+  
+    def count(self, val):
+        """Return the number of elements equal to given value."""
+        k = 0
+        for j in range(len(self)):
+            if self[j] == val:                    # found a match
+                k += 1
+        return k
+```
+- In this code, we use the `ABCMeta` class from the `abc` module as a *metaclass* of `Sequence`, this `ABCMeta` declaration means the constructor for the class raises an error (specifically, you will get `TypeError: Can't instantiate abstract class Sequence without an implementation for abstract methods '__getitem__', '__len__'`). Additionally, the `@abstractmethod` decorator on `__len__` and `__getitem__` means we do not have an implementation for those methods, but we expect any subclass to provide one and Python will enforce this expectation.
+- If a subclass provides its own implementation of an inherited behavior, the subclasses definition overrides the inherited one
+
+### 2.5: Namespaces and object-orientation
+- **Namespace** is an abstraction to manage all identifiers that are defined in a particular scope, and maps each identifier name to its value. Python treats functions/classes/modules as first-class objects, so they all have "value" (such as function/class/module) in the namespace
+#### Instance and class namespaces
+- An **instance namespace** manages the attributes specific to an individual object, such as the specific balance on an instance of the `CreditCard` class from before. The separate **class namespace** is specific to each class that has been defined and it is used to manage members that are shared by all instances of a class and is not specific to any particular instance. An example of this would be a class method such as `__init__` or `get_customer` etc. Note that the instance namespace includes all data members for the instance
+##### How entries are established in a namespace
+- When you use the `self` qualifier for an instance member (such as `self._balance`), the `_balance` identifier is added to the instance namespace. If you are using inheritance, there is still just a single instance namespace per object. The class namespace includes all declarations that are made within the body of the class definition. Member functions are the most typical entries in the class namespace, but other data values, or even other classes can be declared in the class namespace
+##### Class data members
+- A class level data member is often used when there is a value, such as a constant, that should be shared by all members of the class. In the example below, `OVERLIMIT_FEE` is a class-level member and is stored in the class namespace
+```python
+class PredatoryCreditCard(CreditCard):
+    OVERLIMIT_FEE = 5                         # this is a class-level member
+  
+    def charge(self, price):
+        success = super().charge(price)          
+        if not success:
+            self._balance += PredatoryCreditCard.OVERLIMIT_FEE
+        return success
+```
+##### Nested classes
+- It is possible to define a class definition within the scope of another class. In the example below, class `B` is in the namespace of class`A`. This structure can be used to indicate the nested class is meant to support the outer class and can help reduce name conflicts. We will use this structure when working with *linked lists* and *trees*. This can also allow for advanced inheritance, where a subclass of the outer class overrides the definition of the nested class (used in specializing nodes of a balanced search tree structure).
+```python
+class A: # the outer class
+    class B: # the nested class
+        ...
+```
+- Important to note that this is **not** inheritance on its own
+##### Dictionaries and the `__slots__` declaration
+- Python represents each namespace with a `dict` instance that maps names to objects. However, to use a more streamlined representation, you can use a class-level member named `__slots__` (example below). If a base class declares `__slots__`, the subclass must also declare `__slots__` and should only include the names of supplemental methods that are introduced 
+```python
+class CreditCard:
+    __slots__ = '_customer', '_bank', '_account', '_balance', '_limit'
+
+# not covered in the book, but can also use `dataclass` for a similar setup
+from dataclasses import dataclass
+
+@dataclass(slots=True)
+class CreditCard:
+    _customer: str
+    _bank: str
+    _account: str
+    _balance: float
+    _limit: int
+```
+#### Name resolution and dynamic dispatch
+- When using the dot operator syntax (`obj.foo`) the Python interpreter uses the following name resolution process
+  1. The instance namespace is searched
+  2. The class namespace of the class to which the instance belows is searched
+  3. The search continues upward in the inheritance hierarchy
+  4. If the name is not found, an `AttributeError` is raised
+- Python uses **dynamic dispatch** (or **dynamic binding**) to determine at run-time which implementation of function/method to call, based on the object it is invoked on. This is contrasted to **static dispatching** where the decision is made at compile-time
+
+### 2.6: Shallow and deep copying
+- As previously discussed, the statement `foo = bar` makes the name `foo` an **alias** of the object that is identified as `bar`. In some instances, we may want to make a copy of the object itself, rather than just make an alias
+- To make a copy of a list, you can send a previous instance of a list to the `list` class constructor, for example `palette = list(warmtones)`. This will create what is known as a **shallow copy**.
+- A **shallow copy** is a list where the contents are exactly the same as the original sequence, which means that both list objects would refer to the exact same objects as their elements. While this is better than an alias, it can lead to unexpected scenarios where we modify an object it one list only to see that change in the other list
+- ![Shallow copy example](images/figure-2.6.2.png)
+- A **deep copy** copies both the list itself and creates copies of the underlying objects
+- ![Deep copy example](images/figure-2.6.3.png)
+#### Python's `copy` module
+- To create a deep copy, the easiest method is to use Python's `copy` module, which has `copy.copy` and `copy.deepcopy` functions
+- To create a deep copy, use the code `palette = copy.deepcopy(warmtones)`
