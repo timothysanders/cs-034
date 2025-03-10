@@ -27,7 +27,6 @@ linear_search(numbers, len(numbers), 82)
 - **Binary search** is a faster algorithm for searching a list, if the elements are sorted and are directly accessible (such as an array). This algorithm checks the middle element of the list, if the search key is found, the algorithm returns the matching location. If the search key is not found, the algorithm repeats the search on the left or right sublist (depending on if the search key was greater or less than the previously checked value).
 ```python
 def binary_search(numbers, numbers_size, key):
-    mid = 0
     low = 0
     high = numbers_size - 1
     while high >= low:
@@ -101,3 +100,120 @@ binary_search([2, 4, 7, 10, 11, 32, 45, 87], 45)
 
 ### 4.5: Growth of functions and complexity
 #### Upper and lower bounds
+- An algorithm with a runtime complexity of T(N) has an upper and lower bound
+  - **Lower bound**: a function f(N) that is <= the best case T(N), for all values of N >= 1
+  - **Upper bound**: a function f(N) that is >= the worst case T(N), for all values of N >= 1
+- Given a function T(N), an infinite number of lower bounds and upper bounds exist. As an example, if an algorithm's best case runtime is `T(N) = 5N + 4`, then subtracting any nonnegative integer yields a lower bound: `5N + 3`, `5N + 2`, etc. To find the preferred bound, two additional criteria are commonly used. The preferred bound 1. is a single-term polynomial and 2. bounds T(N) as tightly as possible.
+#### Growth rates and asymptotic notations
+- We can use an additional simplification to factor out the constant from a bounding function, leaving a function that categorizes the algorithm's growth rate, so instead of saying an algorithm's runtime function has an upper bound of $30N^2$, the algorithm can be described as having a worst case growth rate of $N^2$
+- **Asymptotic notation** is the classification of runtime complexity that uses functions that indicate only the growth rate of a bounding function
+- There are three asymptotic notations commonly used in complexity analysis
+  - **$O$ notation**: provides a growth rate for the algorithm's upper bound
+  - **$\Omega$ notation**: provides a growth rate for the algorithm's lower bound.
+  - **$\Theta$ notation**: provides a growth rate that is both an upper and lower bound.
+
+| Notation | General form          | Meaning                                                                        |
+|----------|-----------------------|--------------------------------------------------------------------------------|
+| $O$      | $T(N) = O(f(N))$      | A positive constant $c$ exists such that, for all N ≥ 1, $T(N) \leq c * f(N)$. |
+| $\Omega$ | $T(N) = \Omega(f(N))$ | A positive constant $c$ exists such that, for all N ≥ 1, $T(N) \geq c * f(N)$. |
+| $\Theta$ | $T(N) = \Theta(f(N))$ | $T(N) = O(f(N))$ and $T(N) = \Omega(f(N))$.                                    |
+
+### 4.6: O Notation
+#### Big O notation
+- **Big O notation** is a mathematical way of describing how a function (running time of an algorithm) generally behaves in relation to the input size. In Big O notation, all functions that have the same growth rate are characterized using the same Big O notation, so all functions that have the same growth rate are considered equivalent in Big O notation
+- The Big O notation for a function can be determined using the following rules
+  1. If f(N) is a sum of several terms, the highest order term (the one with the fastest growth rate) is kept and others are discarded
+  2. If f(N) has a term that is a product of several factors, all constants (those that are not in terms of N) are omitted
+#### Big O notation of composite functions
+- The following rules are used to determine the Big O notation of composite functions, with c denoting a constant
+
+| Composite function | Big O notation |
+|--------------------|----------------|
+| c · O(f(N))        | O(f(N))        |
+| c + O(f(N))        | O(f(N))        |
+| g(N) · O(f(N))     | O(g(N) · f(N)) |
+| g(N) + O(f(N))     | O(g(N) + f(N)) |
+#### Runtime growth rate
+- When evaluating algorithms, the efficiency of the algorithm for large input sizes is critical. Small inputs are likely to have fast runtimes, so efficiency is less of a concern. The table below shows examples of the runtime required to perform f(N) instructions (assuming $1\mu s$ per instruction execution)
+
+| Function   | N = 10 | N = 50     | N = 100       | N = 1000 | N = 10000  | N = 100000  |
+|------------|--------|------------|---------------|----------|------------|-------------|
+| $\log_2N$  | 3.3 μs | 5.65 μs    | 6.6 μs        | 9.9 μs   | 13.3 μs    | 16.6 μs     |
+| $N$        | 10 μs  | 50 μs      | 100 μs        | 1000 μs  | 10 ms      | 100 ms      |
+| $N\log_2N$ | .03 ms | .28 ms     | .66 ms        | .0099 s  | .132 s     | 1.66 s      |
+| $N^2$      | .1 ms  | 2.5 ms     | 10 ms         | 1 s      | 100 s      | 2.7 hours   |
+| $N^3$      | 1 ms   | .125 s     | 1 s           | 16.7 min | 11.57 days | 31.7 years  |
+| $2^N$      | .001 s | 35.7 years | \> 1000 years |          |            |             |
+#### Common Big O complexities
+- Many commonly used algorithms have running time functions that belong to one of a handful of growth functions. The best algorithm is one that can be solved in constant time complexity (`O(1)`), but not all problems can be solved this way.
+
+| Notation   | Name         | Example pseudocode                                                                                                                                                                                                                                                                                                                                                                                                         |
+|------------|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| O(1)       | Constant     | <pre><code>find_min(x, y):<br>    if x < y:<br>        return x<br>    else:<br>        return y</code></pre>                                                                                                                                                                                                                                                                                                              |
+| O(log N)   | Logarithmic  | <pre><code>binary_search(numbers, n, key):<br>    mid = 0<br>    low = 0<br>    high = n - 1<br><br>    while (high >= low):<br>        mid = (high + low) // 2<br>        if (numbers[mid] < key):<br>            low = mid + 1<br>        elif (numbers[mid] > key):<br>            high = mid - 1<br>        else:<br>            return mid<br>        <br>    return -1  # not found</code></pre>                     |
+| O(N)       | Linear       | <pre><code>linear_search(numbers, numbers_size, key):<br>    for i in range(numbers_size):<br>        if (numbers[i] == key):<br>            return i<br>    <br>    return -1  # not found</code></pre>                                                                                                                                                                                                                   |
+| O(N log N) | Linearithmic | <pre><code>merge_sort(numbers, l, r):<br>    if (l < r):<br>        j = (l + r) // 2        # Find midpoint<br><br>        merge_sort(numbers, l, j)      # Sort left part<br>        merge_sort(numbers, j + 1, r)  # Sort right part<br>        merge(numbers, l, j, r)      # Merge parts<br>    </code></pre>                                                                                                          |
+| O(N²)      | Quadratic    | <pre><code>selection_sort(numbers, numbers_size):<br>    for i in range(numbers_size):<br>        index_smallest = i<br>        for j in range(i+1, numbers_size):<br>            if (numbers[j] < numbers[index_smallest]):<br>                index_smallest = j<br>        <br>        temp = numbers[i]<br>        numbers[i] = numbers[index_smallest]<br>        numbers[index_smallest] = temp<br>    </code></pre> |
+| O(c^N)     | Exponential  | <pre><code>fibonacci(n):<br>    if ((n == 0) or (n == 1)):<br>        return n<br>    <br>    return fibonacci(n-1) + fibonacci(n-2)<br>    </code></pre>                                                                                                                                                                                                                                                                  |
+
+### 4.7: Algorithm analysis
+#### Worst-case algorithm analysis
+- To analysis how algorithm runtime scales as input size increases, we need to determine how many operations an algorithm executes for an input size N, which is then used to determine big-O notation. Algorithm runtime analysis often focuses on the **worst-case runtime**, which is the runtime complexity that results in the longest execution (other runtimes include best-case runtime and average-case runtime).
+#### Counting constant time operations
+- When performing algorithm analysis, the definition of a single operation, which can be any statement (or constant number of statements) that has a constant runtime complexity, doesn't need to be precise since constants are omitted in big-O notation. This means you don't need to precisely count the number of constant time operations in a finite sequence
+
+### 4.8: Recursive definitions
+#### Recursive algorithms
+- An algorithm is a sequence of steps, including at least 1 terminating step, for solving a problem. A **recursive algorithm** is an algorithm that breaks up the problem into smaller subproblems and then applies the algorithm itself to solve the smaller subproblems. Because a problem cannot be endlessly divided into smaller subproblems, a recursive algorithm must have a **base case**, where the algorithm completes without applying itself to a smaller subproblem.
+#### Recursive functions
+- A **recursive function** is a function that calls itself and a recursive function is commonly used to implement a recursive algorithm. Some example recursive functions are below
+```python
+def factorial(n: int) -> int:
+    """
+    Return the factorial of a given number, using recursion.
+    
+    Parameters
+    ----------
+    n : int
+    
+    Returns
+    -------
+    int
+    
+    Raises
+    ------
+    ValueError
+        If the number provided is less than or equal to 0
+    """
+    if n <= 0:
+        raise ValueError("n must be greater than 0")
+    if n == 1:
+        return 1
+    else:
+        return n * factorial(n - 1)
+
+def cumulative_sum(n: int) -> int:
+    """
+    Calculate the cumulative sum of all integers, from 0 to n (inclusive).
+    
+    Parameters
+    ----------
+    n : int
+    
+    Returns
+    -------
+    int
+    
+    Raises
+    ------
+    ValueError
+        If n is less than 0
+    """
+    if n < 0:
+        raise ValueError("n must be non-negative")
+    if n == 0:
+        return 0
+    else:
+        return n + cumulative_sum(n - 1)
+```
+### 4.9: Recursive algorithms
