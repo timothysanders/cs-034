@@ -66,16 +66,16 @@ linear_search([4, 7, 9, 11, 15, 18, 20, 22, 54], 55)
 ```python
 def binary_search(numbers, key):
     low = 0
-    mid = len(numbers) // 2
     high = len(numbers) - 1
     while high >= low:
-        mid = (high + low) // 2
-        if numbers[mid] < key:
-            low = mid + 1
-        elif numbers[mid] < key:
-            high = mid - 1
-        else:
+        mid = low + (high - low) // 2
+        print(numbers[mid])
+        if numbers[mid] == key:
             return mid
+        elif numbers[mid] < key:
+            low = mid + 1
+        else:
+            high = mid - 1
     return -1
 
 
@@ -217,3 +217,38 @@ def cumulative_sum(n: int) -> int:
         return n + cumulative_sum(n - 1)
 ```
 ### 4.9: Recursive algorithms
+#### Fibonacci numbers
+- The **Fibonacci sequence** is a sequence where each number is the sum of the previous two items in the sequence, except for the first two, which are 0 and 1. An example implementation is shown below
+```python
+def fibonacci_number(terminating_index):
+    if terminating_index == 0:
+        return 0
+    elif terminating_index == 1:
+        return 1
+    else:
+        return fibonacci_number(terminating_index - 1) + fibonacci_number(terminating_index - 2)
+```
+#### Recursive binary search
+- **Binary search** is an algorithm that searches a sorted list for a key by comparing the key to the middle element in the list and recursively searching half of the remaining list so long as the key is not found.
+- The algorithm first checks the middle item of the list, if that is the search key, it is returned. Otherwise, the algorithm searches the left remaining sublist (if search key is less than the middle element) or the right remaining sublist (if search key is greater than the middle element)
+```python
+def binary_search(numbers, low, high, key):
+    # Generally want to avoid recursive implementation of this algorithm..
+    if low > high:
+        return -1
+    # This approach to calculating `mid` is preferred to avoid possible integer overflow errors
+    # However, this is not something we would run into with Python
+    mid = low + (high - low) // 2
+    if numbers[mid] < key:
+        return binary_search(numbers, mid + 1, high, key)
+    elif numbers[mid] > key:
+        return binary_search(numbers, low, mid - 1, key)
+    return mid
+```
+### 4.10: Analyzing the time complexity of recursive algorithms
+#### Recurrence relations
+- A runtime complexity T(N) of a recursive function has function T on both sides of the equation. As an example, binary search performs constant time operations, then a recursive call that operates on half the input, which makes our runtime complexity `T(N) = O(1) + T(N/2)`. This function is known as a **recurrence relation**, which is a function that is defined in terms of the same function operation on a value < N.
+- Using big-O notation for recursive functions requires solving the recurrence relation, for simple recursive functions, this can be done by expressing the number of function calls as a function of N. The number of function calls corresponds to the runtime complexity
+#### Recursion trees
+- Runtime complexity for any recursive function can be split into two parts: operations done directly by the function and operations done by the recursive calls made by the function. A useful tool for solving recurrences is a **recursion tree**, which is a visual diagram of an operation done by a recursive function, that separates operations done directly by the function and operations done by recursive calls.
+- ![Recursion tree example](images/figure-4.10.3.png)
