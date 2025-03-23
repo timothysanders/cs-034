@@ -6,3 +6,5 @@ PCC CS-034 Advanced Python Programming
 - [Chapter 2: Object-Oriented Programming](chapter-02.md)
 - [Chapter 3: Introduction to Data Structures and Algorithms](chapter-03.md)
 - [Chapter 4: Searching and Algorithm Analysis](chapter-04.md)
+- [Chapter 5: Sorting Algorithms](chapter-05.md)
+- [Chapter 6: Lists](chapter-06.md)
