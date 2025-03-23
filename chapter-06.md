@@ -112,4 +112,17 @@
 - The `prepend()` method adds a node to the beginning of the linked list, making it the new head node of the list. `prepend()`'s second parameter is the new node to be prepended to the list.
 - The `insert_after()` method adds a node after an existing node by assigning the new node's next data member to the existing node's next data member, then assigning the existing node's next data member to the new node. The method takes parameters of the existing node (current node) and the new node to be inserted (in addition to self). 
 - The `remove_after()` method removes a node after the specified node by assigning the node's next value to the specified node's next data member. The method's parameter is the node before the node to be removed
-- 
+
+### 6.7: Doubly-linked lists
+- A **doubly-linked list** is another data structure for implementing a list ADT, where each node has a data, a pointer to the next node, and a pointer to the previous node. The list structure itself typically points to the first and last node, which are called the head and tail nodes
+- This structure is very similar to a singly-linked list, but it has the additional pointer to the previous node. Doubly-linked lists are a type of **positional list**, where elements contain pointers to the next and/or previous elements in the list
+#### Appending a node to a doubly-linked list
+- Given a new node, the **append** operation for a doubly-linked list inserts a new node after the list's tail node, and the algorithm differs if the list is empty or not empty
+  - *Append to empty list*: If the list's head pointer is null/empty, the algorithm points to the list's head and tail pointers to the new node
+  - *Append to non-empty list*: If the list's head pointer is not null/not empty, the algorithm points the tail node's next pointer to the new node, points the new node's previous pointer to the list's tail node, and points the list's tail pointer to the new node.
+#### Prepending a node to a doubly-linked list
+- Given a new node, the **prepend** operation of a doubly-linked list inserts the new node before the list's head node and points the head node pointer to the new node
+  - *Prepend to empty list*: If the list's head pointer is null/empty, the algorithm points the list's head and tail pointers to the new node
+  - *Prepend to non-empty list*: If the list's head pointer is not null/not empty, the algorithm points the new node's next pointer to the list's head node, points the list head node's previous pointer to the new node, and then points the list's head pointer to the new node
+
+### 6.8: Doubly-linked lists: Insert
