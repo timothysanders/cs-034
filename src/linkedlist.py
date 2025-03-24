@@ -130,7 +130,12 @@ class LinkedList:
 if __name__ == "__main__":
     node_a = Node(95)
     node_b = Node(42)
+    node_c = Node(35)
+    node_d = Node(10)
 
     list_test = LinkedList()
     list_test.append(node_a)
     list_test.append(node_b)
+    list_test.prepend(node_c)
+    list_test.insert_after(node_c, node_d)
+    list_test.remove_after(node_a)
