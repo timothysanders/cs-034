@@ -101,7 +101,7 @@
 - Given a key, a **search** algorithm returns the first node that matches that key, or returns null if a matching node was not found. Simple linked list search algorithms check the current node (initially the head node), returning that node if a match is found, or pointing the current node to the next node and repeating
 
 ### 6.6: Python - Singly-linked lists
-- For the implementation of the linked list in Python, see [src/linkedlist.py](src/linkedlist.py)
+- For the implementation of the singly-linked list in Python, see [src/linkedlist.py](src/linkedlist.py)
 #### Constructing the node and list class
 - Classes are used for the linked list and the nodes that comprise the list. Each class includes references to nodes (next node for node class and head and tail nodes for the LinkedList class)
 - The Node class implements a list node with two data members, a data value and the next node in the list. If the node has no next value, the next data member is assigned None (Python's term signifying the absence of a value)
@@ -126,3 +126,25 @@
   - *Prepend to non-empty list*: If the list's head pointer is not null/not empty, the algorithm points the new node's next pointer to the list's head node, points the list head node's previous pointer to the new node, and then points the list's head pointer to the new node
 
 ### 6.8: Doubly-linked lists: Insert
+- Given a new node, the *insertAfter* operation for a doubly-linked list inserts the new node after the provided, existing list node. curNode is a pointer to an existing node. The insertAfter algorithm has three scenarios
+  - *Insert as first node*: If the list's head pointer is null (list is empty), the algorithm points the list's head and tail pointers to the new node
+  - *Insert after list's tail node*: If the list's head pointer is not null (list is not empty) and curNode points to the list's tail node, the new node is inserted after the tail node. The algorithm points the tail node's next pointer to the new node, points the new node's previous pointer to the list's tail node, and then points the list's tail pointer to the new node
+  - *Insert in middle of list*: If the list's head pointer is not null (list is not empty) and curNode does not point to the list's tail node, the algorithm updates the current, new, and successor nodes' next and previous points to achieve the ordering `{curNode newNode sucNode}`, which requires four pointer updates: point the new node's next pointer to sucNode, point the new node's previous pointer to curNode, point curNode's next pointer to the new node, and point sucNode's previous pointer to the new node
+
+### 6.9: Doubly-linked lists: Remove
+- The **remove** operation for a doubly-linked list removes a provided existing list node, where `curNode` is a pointer to an existing list node. The algorithm first determines the node's successor (next node) and predecessor (previous node). The variable `sucNode` points to the node's successor, and the variable `predNode` points to the node's predecessor. There are four checks to update each pointer
+  - *Successor exists*: If the successor node next pointer is not null (successor exists), the algorithm points the successor's previous pointer to the predecessor node
+  - *Predecessor exists*: If the predecessor node pointer is not null (predecessor exists), the algorithm points the predecessor's next pointer to the successor node.
+  - *Removing list's head node*: If `curNode` points to the list's head node, the algorithm points the list's head pointer to the successor node
+  - *Removing list's tail node*: If `curNode` points to the list's tail node, the algorithm points the list's tail pointer to the predecessor node
+- When removing a node in the middle of a list, both the successor and predecessor node exist, so the algorithm updates the predecessor and successor nodes' pointer to achieve the ordering `{predNode sucNode}`. When removing the only node in a list, `curNode` points to both the list's head and tail nodes, and `sucNode` and `predNode` are both null. The algorithm points the list's head and tail pointers to null, making the list empty
+
+### 6.10 Python: Doubly-linked lists
+- For implementation of the doubly-linked list in Python, see [src/doublylinkedlist.py](src/doublylinkedlist.py)
+#### Adding a reference to the previous node
+- The Node class defined previously can be extended from the singly-linked list version to include a variable reference called `prev` that refers to the previous node in the list. When a node is first constructed, `prev` is assigned None
+#### Appending a node to a doubly-linked list
+- The LinkeList's `append()` method for doubly-linked lists is very similar to the method for singly-linked nodes, but has an added line of code. Before the method assigns the list's tail with the `new_node`, the method assigns the new node's `previous` variable with the old tail fof the list
+#### Additional doubly-linked list members
+- The `prepend()` method inserts a new node at the head of the doubly-linked list, which makes it the new head node. The `previous` variable of the old head node must be set to point to the new head node
+- 
