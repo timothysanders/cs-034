@@ -1,5 +1,5 @@
 """
-Implements a LinkedList and Node class to demonstrate singly-linked lists.
+Implements a singly-LinkedList and Node class to demonstrate singly-linked lists.
 """
 
 class Node:
@@ -17,7 +17,7 @@ class Node:
 
 class LinkedList:
     """
-    The LinkedList class implements a list data structure with two attributes, `head` and `tail`.
+    The LinkedList class implements a singly-linked list data structure with two attributes, `head` and `tail`.
 
     Methods
     -------
@@ -135,7 +135,16 @@ if __name__ == "__main__":
 
     list_test = LinkedList()
     list_test.append(node_a)
+    assert list_test.head.data == 95
+    assert list_test.tail.data == 95
     list_test.append(node_b)
+    assert list_test.head.data == 95
+    assert list_test.tail.data == 42
+    assert list_test.head.next.data == 42
     list_test.prepend(node_c)
+    assert list_test.head.data == 35
+    assert list_test.head.next.data == 95
     list_test.insert_after(node_c, node_d)
+    assert list_test.head.next.data == 10
+    assert list_test.head.next.next.data == 95
     list_test.remove_after(node_a)
