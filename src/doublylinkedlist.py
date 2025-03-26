@@ -113,7 +113,7 @@ class LinkedList:
         predecessor_node = current_node.previous
 
         if successor_node is not None:
-            successor_node.prev = predecessor_node
+            successor_node.previous = predecessor_node
 
         if predecessor_node is not None:
             predecessor_node.next = successor_node
@@ -123,6 +123,25 @@ class LinkedList:
 
         if current_node is self.tail:
             self.tail = predecessor_node
+
+    def insertion_sort(self):
+        current_node = self.head.next
+        while current_node is not None:
+            next_node = current_node.next
+            search_node = current_node.previous
+            while ((search_node is not None) and
+                   (search_node.data > current_node.data)):
+                search_node = search_node.previous
+
+            self.remove(current_node)
+
+            if search_node is None:
+                current_node.previous = None
+                self.prepend(current_node)
+            else:
+                self.insert_after(search_node, current_node)
+
+            current_node = next_node
 
 
 if __name__ == "__main__":
@@ -152,3 +171,8 @@ if __name__ == "__main__":
     num_list.remove(node_c)
     assert num_list.head.data == 4
     assert num_list.tail.data == 2
+    num_list.insertion_sort()
+    assert num_list.head.data == 1
+    assert num_list.head.next.data == 2
+    assert num_list.tail.data == 5
+    assert num_list.tail.previous.data == 4
