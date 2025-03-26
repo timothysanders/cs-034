@@ -125,6 +125,13 @@ class LinkedList:
             self.tail = predecessor_node
 
     def insertion_sort(self):
+        """
+        Sort the LinkedList instance using the insertion sort algorithm.
+
+        Returns
+        -------
+        None
+        """
         current_node = self.head.next
         while current_node is not None:
             next_node = current_node.next
