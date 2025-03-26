@@ -124,7 +124,7 @@ class LinkedList:
         if current_node is self.tail:
             self.tail = predecessor_node
 
-    def insertion_sort(self):
+    def insertion_sort(self) -> None:
         """
         Sort the LinkedList instance using the insertion sort algorithm.
 
