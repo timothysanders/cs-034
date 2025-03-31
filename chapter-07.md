@@ -58,3 +58,21 @@ class Stack:
 
 ### 7.6: Python: Array-based queues
 #### Array-based queue storage
+- A queue can be implemented with an array and needs two variables in addition to the array, `length` and `front_index`. The queue's content starts at `array[front_index]` and continues forward for `length` items, if the array's end is reached before encountering all items, remaining items are stored starting at index 0.
+#### Bounded vs unbounded queue
+- A **bounded queue** is a queue with a length that does exceed a specified maximum value and requires an additional variable, `max_length`. The maximum length is commonly assigned at construction time and does not change for the queue's lifetime. A bounded queue with a length equal to the maximum length is said to be **full**. **Unbounded queues** are queues with a length that can grow indefinitely.
+#### Flexible implementation and resize operation
+- An array-based queue can support both bounded and unbounded queue operations by using `max_length`. If `max_length` is negative, the queue is unbounded, or if `max_length` is nonnegative, the queue is bounded.
+- The Python implementation can use a list to store queue items. `len(queue_list)` is the queue allocation size and the list is used much like a fixed size array. If `max_length` is non-negative, the new list's length is the minimum of `max_length` and double the current list's length, with existing list entries copied so that the front index is reset to 0.
+#### Enqueue and dequeue operations
+- An enqueue operation
+  1. Compares `self.length` and `self.max_length`, if they are equal, the queue is full so no change occurs and False is returned
+  2. Compares `self.length` and `len(self.queue_list)`. If equal, a resize operation occurs.
+  3. Computes the enqueued item's index as `(self.front_index + self.length) % len(self.queue_list)` and assigns the queue_list at that index
+  4. Increments the length attribute and returns True
+- A dequeue operation
+  1. Makes a copy of the list item at `front_index`
+  2. Decrements `length`
+  3. Increments `front_index`, resetting to 0 if the incremented value equals the allocation size
+  4. Returns the list item from step 1
+- Worst-case time complexities are the same for whether the queue is bounded or unbounded: O(n) for enqueue and O(1) for dequeue
