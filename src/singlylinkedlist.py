@@ -1,6 +1,7 @@
 """
 Implements a singly-LinkedList and Node class to demonstrate singly-linked lists.
 """
+from typing import Optional
 
 class Node:
     """
@@ -102,7 +103,7 @@ class LinkedList:
             new_node.next = current_node.next
             current_node.next = new_node
 
-    def remove_after(self, current_node: Node) -> None:
+    def remove_after(self, current_node: Optional[Node] = None) -> None:
         """
         Remove a node after the specified current node.
 
