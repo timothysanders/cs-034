@@ -76,3 +76,32 @@ class Stack:
   3. Increments `front_index`, resetting to 0 if the incremented value equals the allocation size
   4. Returns the list item from step 1
 - Worst-case time complexities are the same for whether the queue is bounded or unbounded: O(n) for enqueue and O(1) for dequeue
+
+### 7.7: Python: Stacks and Queues using linked lists
+#### Implementing a stack in Python
+- Stacks can be implemented with a single linked list data member and the Stack class itself has two methods, `push()` and `pop()`
+  - `push()` adds a node to the top of the stack by calling LinkedList's `prepend()` method
+  - `pop()` removes the head of the stack's list with the `LinkedList.remove_after()` method and returns the node's data
+#### Implementing a queue in Python
+- Queues can also be implemented with a single LinkedList data member and the Queue class has methods `enqueue()` and `dequeue()`
+  - `enqueue()` adds a node at the end of the queue, calling `LinkedList.append()`
+  - `dequeue()` removes the queue's head node and returns the node's data
+
+### 7.8: Deque abstract data type (ADT)
+#### Deque abstract data type
+- A **deque** (pronounced "deck") is a double-ended queue, which is an ADT where items can be inserted and removed from both the front and the back
+- The `push_front()` method inserts an item at the front of the deque and the `push_back()` adds an item at the back of the deque.
+- The `pop_front()` method removes and returns the item at the front of the deque and the `pop_back()` method removes and returns the item at the back of the deque
+#### Common deque ADT operations
+- A deque typically supports peeking at the front and back, along with determining the length. The peek operations do not remove any items
+
+| Operation           | Description                                                | Example starting with deque: 59, 63, 19 (front is 59)   |
+|---------------------|------------------------------------------------------------|---------------------------------------------------------|
+| PushFront(deque, x) | Inserts x at the front of the deque                        | PushFront(deque, 41). Deque: 41, 59, 63, 19             |
+| PushBack(deque, x)  | Inserts x at the back of the deque                         | PushBack(deque, 41). Deque: 59, 63, 19, 41              |
+| PopFront(deque)     | Returns and removes item at front of deque                 | PopFront(deque) returns 59. Deque: 63, 19               |
+| PopBack(deque)      | Returns and removes item at back of deque                  | PopBack(deque) returns 19. Deque: 59, 63                |
+| PeekFront(deque)    | Returns but does not remove the item at the front of deque | PeekFront(deque) returns 59. Deque is still: 59, 63, 19 |
+| PeekBack(deque)     | Returns but does not remove the item at the back of deque  | PeekBack(deque) returns 19. Deque is still: 59, 63, 19  |
+| IsEmpty(deque)      | Returns true if the deque is empty                         | IsEmpty(deque) returns false.                           |
+| GetLength(deque)    | Returns the number of items in the deque                   | GetLength(deque) returns 3.                             |
