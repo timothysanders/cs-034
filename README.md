@@ -8,3 +8,4 @@ PCC CS-034 Advanced Python Programming
 - [Chapter 4: Searching and Algorithm Analysis](chapter-04.md)
 - [Chapter 5: Sorting Algorithms](chapter-05.md)
 - [Chapter 6: Lists](chapter-06.md)
+- [Chapter 7: Stacks and Queues](chapter-07.md)
