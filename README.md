@@ -1,5 +1,5 @@
-# cs-034
-PCC CS-034 Advanced Python Programming
+# CS-034: Advanced Python Programming
+PCC CS-034 Advanced Python Programming Spring 2025
 
 ## Chapters
 - [Chapter 1: Python Primer](chapter-01.md)
@@ -9,3 +9,4 @@ PCC CS-034 Advanced Python Programming
 - [Chapter 5: Sorting Algorithms](chapter-05.md)
 - [Chapter 6: Lists](chapter-06.md)
 - [Chapter 7: Stacks and Queues](chapter-07.md)
+- [Chapter 8: Hash Tables](chapter-08.md)
