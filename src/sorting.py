@@ -51,12 +51,19 @@ def insertion_sort(numbers: list[int | float]) -> None:
 
 def insertion_sort_interleaved(numbers: list[int], start_index: int, gap: int) -> None:
     """
+    Sort the given subarray of numbers in place, using insertion sort.
+
+    This sorts the given array starting from the element at `start_index` and
+    every additional element at multiples of `gap`
 
     Parameters
     ----------
-    numbers
+    numbers : list[int]
+        The list of integers to be partially sorted
     start_index
+        The index at which to begin sorting
     gap
+        The step interval between elements in the interleaved subarray
 
     Returns
     -------
