@@ -120,3 +120,64 @@ def shell_sort(numbers: list[int], gap_values: list[int]) -> None:
     for gap_value in gap_values:
         for i in range(gap_value):
             insertion_sort_interleaved(numbers, i, gap_value)
+
+
+def partition(numbers: list[int | float], low_index: int, high_index: int) -> int:
+    """
+    Partition the array segment and return the partition index.
+
+    Parameters
+    ----------
+    numbers : list
+        The list to be partitioned
+    low_index : int
+        The lower bound of the segment to be partitioned
+    high_index : int
+        The upper bound of the segment to be partitioned
+
+    Returns
+    -------
+    int
+        The index where the partition ends
+    """
+    # Identify the midpoint/pivot value using floor division
+    midpoint = low_index + (high_index - low_index) // 2
+    pivot = numbers[midpoint]
+    done = False
+    while not done:
+        while numbers[low_index] < pivot:
+            low_index += 1
+        while pivot < numbers[high_index]:
+            high_index -= 1
+        if low_index >= high_index:
+            done = True
+        else:
+            numbers[low_index], numbers[high_index] = numbers[high_index], numbers[low_index]
+            low_index += 1
+            high_index -= 1
+    return high_index
+
+
+def quicksort(numbers: list[int | float], low_index: int, high_index: int) -> None:
+    """
+    Sort a list in-place using quicksort algorithm.
+
+    This implementation relies on the Hoare partition schema and
+    will select the pivot as the middle index of the given list.
+
+    Parameters
+    ----------
+    numbers : list
+        The list to be sorted (modified in-place)
+    low_index : int
+        The lower bound of the segment to be sorted
+    high_index : int
+        The upper bound of the segment to be sorted
+    """
+    # Our base case for recursion is where the partition size is 1 or zero elements
+    if low_index >= high_index:
+        return
+
+    partition_index = partition(numbers, low_index, high_index)
+    quicksort(numbers, low_index, partition_index)
+    quicksort(numbers, partition_index + 1, high_index)
