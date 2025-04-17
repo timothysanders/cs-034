@@ -181,3 +181,151 @@ def quicksort(numbers: list[int | float], low_index: int, high_index: int) -> No
     partition_index = partition(numbers, low_index, high_index)
     quicksort(numbers, low_index, partition_index)
     quicksort(numbers, partition_index + 1, high_index)
+
+
+def merge(numbers: list[int | float], i: int, j: int, k: int) -> None:
+    """
+    Merge two sorted subarrays into a single sorted subarray.
+
+    Parameters
+    ----------
+    numbers : list[int|float]
+        The list containing the subarrays to merge
+    i : int
+        Start index of the first subarray
+    j : int
+        End index of the first subarray
+    k : int
+        End index of the second subarray (second subarray starts at j+1)
+    """
+    merged_size = k - i + 1
+    merged_numbers = [0] * merged_size
+    merge_position = 0
+    left_position = i
+    right_position = j + 1
+    # Add the smallest element from left or right partition to merged numbers
+    while left_position <= j and right_position <= k:
+        if numbers[left_position] <= numbers[right_position]:
+            merged_numbers[merge_position] = numbers[left_position]
+            left_position += 1
+        else:
+            merged_numbers[merge_position] = numbers[right_position]
+            right_position += 1
+        merge_position += 1
+    # If left partition is not empty, add remaining elements to merged numbers
+    while left_position <= j:
+        merged_numbers[merge_position] = numbers[left_position]
+        left_position += 1
+        merge_position += 1
+    # If right partition is not empty, add remaining elements to merged numbers
+    while right_position <= k:
+        merged_numbers[merge_position] = numbers[right_position]
+        right_position += 1
+        merge_position += 1
+    # Copy merge back to original list
+    for mp in range(merged_size):
+        numbers[i + mp] = merged_numbers[mp]
+
+
+def merge_sort(numbers: list[int | float], i: int, k: int) -> None:
+    """
+    Sort a subarray in-place using the merge sort algorithm.
+
+    Parameters
+    ----------
+    numbers : list[int|float]
+        The list to be sorted (sorted in-place)
+    i : int
+        Start index of the subarray to be sorted
+    k : int
+        End index of the subarray to be sorted
+    """
+    if i < k:
+        j = (i + k) // 2
+        # recursively sort left and right partitions
+        merge_sort(numbers, i, j)
+        merge_sort(numbers, j + 1, k)
+        # merge left and right partition in sorted order
+        merge(numbers, i, j, k)
+
+
+def radix_get_max_length(numbers: list[int]) -> int:
+    """
+    Return the maximum length of a number in numbers.
+
+    Parameters
+    ----------
+    numbers : list[int]
+
+    Returns
+    -------
+    int
+    """
+    max_digits = 0
+    for num in numbers:
+        digit_count = radix_get_length(num)
+        if digit_count > max_digits:
+            max_digits = digit_count
+    return max_digits
+
+
+def radix_get_length(value: int) -> int:
+    """
+    Return the length of a given value, in number of digits.
+
+    Parameters
+    ----------
+    value : int
+
+    Returns
+    -------
+    int
+    """
+    value = abs(value)
+    if value == 0:
+        return 1
+    digits = 0
+    while value != 0:
+        digits += 1
+        value = int(value / 10)
+    return digits
+
+
+def radix_sort(numbers: list[int]) -> None:
+    """
+    Sort an array of numbers using the radix sort algorithm.
+
+    Note that this implementation of radix sort supports negative integers.
+
+    Parameters
+    ----------
+    numbers : list[int]
+
+    Returns
+    -------
+    None
+    """
+    buckets = [[] for _ in range(10)]
+    # find the max length of any number in the provided numbers
+    max_digits = radix_get_max_length(numbers)
+    pow_10 = 1
+    for digit_index in range(max_digits):
+        for num in numbers:
+            bucket_index = (abs(num) // pow_10) % 10
+            buckets[bucket_index].append(num)
+        numbers.clear()
+        for bucket in buckets:
+            numbers.extend(bucket)
+            bucket.clear()
+        pow_10 *= 10
+
+    negatives = []
+    non_negatives = []
+    for num in numbers:
+        if num < 0:
+            negatives.append(num)
+        else:
+            non_negatives.append(num)
+    negatives.reverse()
+    numbers.clear()
+    numbers.extend(negatives + non_negatives)
