@@ -198,3 +198,27 @@ def avl_tree_remove_node(tree, node):
 ```
 #### AVL removal algorithm complexity
 - In the worst case, the AVL removal algorithm traverses the tree to the lowest level to find the node to remove, then traverses back up to the root to rebalance. One node is visited per level, and at most 2 rotations are needed for a single node. Each rotation is an $O(1)$ operation, so the runtime complexity of AVL tree removal is $O(\log{N})$
+
+### 10.5: Python - AVL trees
+#### The node class for AVL trees
+- Because AVL trees are a form of a binary search tree, the AVLTree class is similar to the BinarySearchTree class. A Node class is used to contain attributes `key`, `left`, and `right`, (like BinarySearchTree) and `parent` (pointer to parent node, None for root) and `height` (height of the subtree at the node, single node has a height of 0)
+- `height` is used to detect imbalances in the tree after removals and insertions, while `parent` is used during rotations to correct imbalances
+- `Node` class methods for AVL operations
+  - `get_balance()`: return the node's balance factor, left child's height minus the right child's height. A height of -1 is used if the child is None
+  - `update_height()`: calculate the node's current height and assign the height data member with the new value
+  - `set_child()`: assigns either the left or right child data members with a new node
+  - `replace_child()`: replace the current child node with a new node
+#### Rotations and rebalancing
+- Tree rotations are required to correct any problems where left and right subtrees of a node have heights that differ by more than one. After a new node is inserted into an AVL tree, either one or two rotations will fix any imbalance that happens (`rotate_left()` and `rotate_right()`). The `rebalance()` method examines the subtree of a node and determines what rotations to do if a height imbalance exists at the node.
+#### Insertions
+- AVL insertions require two steps
+  1. Insert into the tree using the normal binary search tree insertion algorithm
+     - This requires $O(\log{N})$ steps, since an AVL tree has $O(\log{N})$ levels, and the loop makes the current node go down one level with each iteration.
+  2. Call `rebalance()` on all nodes along a path from the new node's parent up to the root
+     - This requires $O(\log{N})$ steps, since the path back up to the root has $O(\log{N})$ levels to visit, and rotations are $O(1)$. This makes insert's worst-case runtime $O(\log{N})$
+#### Removals
+- Removal from an AVL tree is a two-step process, similar to insertion
+  1. Remove the node in the same was as a BST, with one of four cases determining how to remove the node. Generally, the node's key is replaced by the successor node's key in the tree, and the successor is then more easily removed
+  2. Call `rebalance()` on all nodes on the path from the removed node's parent up to the root. If the node's successor was ultimately removed, the rebalancing begins from the successor's parent, not the original target node.
+- As with insertion, each step requires $O(1)$ operations to be performed, first on a path from the root down to a leaf, then on a path near a leaf back up to the root. Because the height of an AVL tree is $\log{N}$ levels, the entire removal algorithm has a worst case $O(\log{N})$ time
+- Often a user does not know where a desired node to be removed is in the tree, or if the node even exists at all. You can use `remove_key()` to search for the node and then call `remove_node()` only if `search()` returns a node pointer
