@@ -4,10 +4,18 @@
 #### Balanced BST
 - An **AVL tree** is a BST with a height balance property and specific operations to re-balance the tree when a node is inserted or removed. A BST is **height balanced** if for any node, the heights of the node's left and right subtrees differ by only 0 or 1
 - A node's **balance factor** is the left subtree height minus the right subtree height, which can be 1, 0, or -1 in an AVL tree
+  - Note that you do not use the height of the tree itself, but only the subtrees
 - A tree (or subtree) with just one node has a height of 0. For calculating balance factor, a non-existent left or right child's subtree's height is -1
 #### AVL tree height
 - Minimizing binary tree height gives you the fastest searches, insertions, and removals. If nodes are inserted/removed dynamically, maintaining minimum tree height requires extensive tree rearrangements, while an AVL tree requires only a few local rotations, which is more computationally efficient but doesn't guarantee a minimum height. An AVL tree's worst case height is about 1.5x the minimum binary tree height, so the height is still considered to be $O(\log{N})$, with N being the number of nodes. In practice, AVL tree heights are much closer to the minimum.
 - ![AVL tree - non-perfect BST](images/figure-10.1.1.png)
+- The height of a node in an AVL tree is the number of edges on the longest path from that given node to a leaf
+  - A **leaf node** has a height of 0
+  - An **empty node** has a height of -1
+- ![Example heights](images/challenge-10.1.1-2.png)
+  - 60's left subtree height is 0 (the height of node 50 is 0)
+  - 60's right subtree height is 1 (the height of the tree beginning with 70 is 1)
+  - 60's balance factor is -1 (left-subtree.height - right-subtree.height)
 #### Storing height at each AVL node
 - An AVL tree implementation can store the subtree height as a member of each node. With the height stored as a member of each node, the balance factor for any node can be computed in $O(1)$ time. This means that when nodes are inserted or removed from the AVL tree, ancestor nodes may need to recompute their heights.
 #### References
@@ -222,3 +230,239 @@ def avl_tree_remove_node(tree, node):
   2. Call `rebalance()` on all nodes on the path from the removed node's parent up to the root. If the node's successor was ultimately removed, the rebalancing begins from the successor's parent, not the original target node.
 - As with insertion, each step requires $O(1)$ operations to be performed, first on a path from the root down to a leaf, then on a path near a leaf back up to the root. Because the height of an AVL tree is $\log{N}$ levels, the entire removal algorithm has a worst case $O(\log{N})$ time
 - Often a user does not know where a desired node to be removed is in the tree, or if the node even exists at all. You can use `remove_key()` to search for the node and then call `remove_node()` only if `search()` returns a node pointer
+
+### 10.6: Red-black tree - a balanced tree
+- A **red-black** tree is a BST with two node types (red and black), and supporting operations that ensure the tree is balanced when a node is inserted or removed. Red-black tree's requirements ensure that a tree with N nodes will have a height of $O(\log{N})$
+  - Every node is colored either red or black
+  - The root node is black
+  - A red node's children cannot be red
+  - A null child is considered to be a black leaf node
+  - All paths from a node to any null leaf descendant node must have the same number of black nodes
+
+### 10.7: Red-black tree - Rotations
+#### Introduction to rotations
+- A rotation is a rearrangement of a BST to maintain the BST ordering property while rebalancing the tree. These rotations are used during insert/remove operations on red/black trees to ensure that the red/black tree requirements hold and rotations are done "at" a node level
+- A left rotation at a node causes the node's right child to take the node's place in the tree. A right rotation at a node causes the node's left child to take the node's place in the tree
+#### Left rotation algorithm
+- A rotation requires altering up to three child subtree pointers and requires the node's right child to be non-null.
+- Two utility functions are used for red-black tree rotations
+  - `rb_tree_set_child()` utility function sets a node's left child, if the `which_child` parameter is "left" or right child (if the `which_child` parameter is "right") and updates the child's parent pointer.
+    ```python
+    def rb_tree_set_child(parent, which_child, child):
+        if which_child != "left" and which_child != "right":
+            return False
+        if which_child == "left":
+            parent.left = child
+        else:
+            parent.right = child
+        if child is not None:
+            child.parent = parent
+        return True
+    ```
+  - `rb_tree_replace_child()` utility function replaces a node's left or right child pointer with a new value
+    ```python
+    def rb_tree_replace_child(parent, current_child, new_child):
+        if parent.left == current_child:
+            return rb_tree_set_child(parent, "left", new_child)
+        elif parent.right == current_child:
+            return rb_tree_set_child(parent, "right", new_child)
+        return False
+    ```
+- The `rb_tree_rotate_left()` function performs a left rotation at the specified node by updating the right child's left child to point to the node, then updating the node's right child to point to the right child's former left child. If non-null, the node's parent has the child pointer changed from node to the node's right child. Otherwise, if the node's parent is null, then the tree's root pointer is updated to point to the node's right child
+    ```python
+    def rb_tree_rotate_left(tree, node):
+        right_left_child = node.right.left
+        if node.parent is not None:
+            rb_tree_replace_child(node.parent, node, node.right)
+        else:
+            tree.root = node.right
+            tree.root.parent = None
+        rb_tree_set_child(node.right, "left", node)
+        rb_tree_set_child(node, "right", right_left_child)
+    ```
+#### Right rotation algorithm
+- Right rotation is analogous to left rotation. A right rotation at a node requires the node's left child to be non-null
+    ```python
+    def rb_tree_rotate_right(tree, node):
+        left_right_child = node.left.right
+        if node.parent is not None:
+            rb_tree_replace_child(node.parent, node, node.left)
+        else:
+            tree.root = node.left
+            tree.root.parent = None
+        rb_tree_set_child(node.left, "right", node)
+        rb_tree_set_child(node, "left", left_right_child)
+    ```
+##### Python
+```python
+def rb_tree_set_child(parent, which_child, child):
+    if which_child != "left" and which_child != "right":
+        return False
+    if which_child == "left":
+        parent.left = child
+    else:
+        parent.right = child
+    if child is not None:
+        child.parent = parent
+    return True
+
+def rb_tree_replace_child(parent, current_child, new_child):
+    if parent.left == current_child:
+        return rb_tree_set_child(parent, "left", new_child)
+    elif parent.right == current_child:
+        return rb_tree_set_child(parent, "right", new_child)
+    return False
+
+
+def rb_tree_rotate_left(tree, node):
+    right_left_child = node.right.left
+    if node.parent is not None:
+        rb_tree_replace_child(node.parent, node, node.right)
+    else:
+        tree.root = node.right
+        tree.root.parent = None
+    rb_tree_set_child(node.right, "left", node)
+    rb_tree_set_child(node, "right", right_left_child)
+
+def rb_tree_rotate_right(tree, node):
+    left_right_child = node.left.right
+    if node.parent is not None:
+        rb_tree_replace_child(node.parent, node, node.left)
+    else:
+        tree.root = node.left
+        tree.root.parent = None
+    rb_tree_set_child(node.left, "right", node)
+    rb_tree_set_child(node, "left", left_right_child)
+```
+
+### 10.8: Red-black tree - Insertion
+- Given a new node, a red-black tree **insert** operation inserts the new node in a proper location to maintain all the red-black tree requirements.
+- This process begins by calling `bst_insert()` to insert a node following BST insertion rules. The newly inserted node is colored red and then a balance operation is performed on the node
+```python
+def rb_tree_insert(tree, node):
+    bst_insert(tree, node)
+    node.color = "red"
+    rb_tree_balance(tree, node)
+```
+- The red-black balance operation follows the steps
+  1. Assign `parent` with `node`'s parent, `uncle` with `node`'s uncle (sibling of `parent`), and `grandparent` with `node`'s grandparent
+  2. If `node` is the tree's root, then color `node` black and return
+  3. If `parent` is black, then return without any alterations
+  4. If `parent` and `uncle` are both red, then color `parent` and `uncle` black, color `grandparent` red, recursively rebalance `grandparent`, then return
+  5. If `node` is `parent`'s right child and `parent` is `grandparent`'s left child, then rotate left at `parent`, assign `node` with `parent`, assign `parent` with `node`'s parent, and go to step 7
+  6. if `node` is `parent`'s left child and `parent` is `grandparent`'s right child, then rotate right at `parent`, assign `node` with `parent`, assign `parent` with `node`'s parent, and go to step 7
+  7. Color `parent` black and `grandparent` red
+  8. If `node` is `parent`'s left child, then rotate right at `grandparent`, otherwise rotate left at `grandparent`
+```python
+def rb_tree_get_grandparent(node):
+    if node.parent is None:
+        return None
+    return node.parent.parent
+
+def rb_tree_get_uncle(node):
+    grandparent = None
+    if node.parent is not None:
+        grandparent = rb_tree_get_grandparent(node)
+    if grandparent is None:
+        return None
+    if grandparent.left == node.parent:
+        return grandparent.right
+```
+
+### 10.9: Red-black tree - Removal
+#### Removal overview
+- Given a particular key, a red-black tree **remove** operation removes the first-found matching node, then restructuring the tree to preserve all red-black tree requirements. First, the node to remove is found using BST search. If found, `rb_tree_remove_node()` is called to remove the node
+```python
+def rb_tree_remove(tree, key):
+    node = bst_search(tree, key)
+    if node is not None:
+        rb_tree_remove_node(tree, node)
+```
+- Given a key, a red-black tree **remove-key** operation removes the key from the tree (if present), then restructuring as needed to preserve all red-black tree requirements. This first calls `bst_search()` to find the node with a particular key, then, if found, calling `rb_tree_remove_node()` to remove the node
+  1. If the node has two children, copy the key from the node's predecessor to a temporary value, recursively remove the predecessor from the tree, replace the node's key with the temporary value, and return
+  2. If the node is black, call `rb_tree_prepare_for_removal()` to restructure the tree in preparation for the node's removal
+  3. Remove the node using the standard BST removal algorithm
+#### Removal utility functions
+- Utility functions are used to simplify common operations of red-black tree removal code, such as `rb_tree_get_sibling` to get a sibling of a given node, `rb_tree_is_non_null_and_red()`, which returns true only if a node is non-null and red (otherwise False), `rb_tree_is_null_or_black()`, which returns true if a node is null or black, and `rb_tree_are_both_children_black()`, which returns true only if both of the node's children are black (remembering that null nodes are black)
+#### Prepare-for-removal algorithm overview
+- Preparation for removing a black node requires altering the number of black nodes along paths to preserve the black-path-length property. `rb_tree_prepare_for_removal()` uses six utility functions to analyze the tree and make appropriate alterations
+#### Prepare for removal algorithm cases
+- Preparation for removal first checks each of the following six use cases
+  1. If the node is red or the node's parent is null, then return
+  2. If the node has a red sibling, then color the parent red and the sibling black. If the node is the parent's left child then rotate left at the parent, otherwise rotate right at the parent. Continue to the next step.
+  3. If the node's parent is black and both children of the node's sibling are black, then color the sibling red, recursively call on the node's parent, and return
+  4. If the node's parent is red and both children of the node's sibling are black, then color the parent black, color the sibling red, then return
+  5. If the sibling's left child is red and both children of the node's sibling are black, then color the parent black, color the sibling red, then return
+  6. If the sibling's left child is black, the sibling's right child is red, and the node is the right child of the parent, then color the sibling red and the right child of the sibling black. Then rotate left at the sibling and continue to the next step.
+  7. Color the sibling the same color as the parent and color the parent black
+  8. If the node is the parent's left child, then color the sibling's right child black and rotate left at the parent. Otherwise, color the sibling's left child black and rotate right at the parent
+
+| Case # | Condition                            | Action if condition is true | Process additional cases after action? |
+|--------|--------------------------------------|-----------------------------|----------------------------------------|
+| 1      | Node is red or node's parent is null | None                        | No                                     |
+| 2 | Sibling node is red | Color parent red and sibling black. If node is left child of parent, rotate left at parent node, otherwise rotate right at parent node | Yes |
+| 3 | Parent is black and both of sibling's children are black | Color sibling red and call removal preparation function on parent | No |
+| 4 | Parent is red and both of sibling's children are black | Color parent black and sibling red | No |
+| 5 | Sibling's left child is red, sibling's right child is black, and node is left child of parent | Color sibling red and sibling's left child black. Rotate right at sibling | Yes |
+| 6 | Sibling's left child is black, sibling's right child is red, and node is red child of parent | Color sibling red and sibling's right child black. Rotate left at sibling | Yes |
+
+##### Python
+```python
+
+def rb_tree_remove(tree, key):
+    node = bst_search(tree, key)
+    if node is not None:
+        rb_tree_remove_node(tree, node)
+
+def rb_tree_remove_node(tree, node):
+    if node.left is not None and node.right is not None:
+        predecessor_node = rb_tree_get_predecessor(node)
+        predecessor_key = predecessor_node.key
+        rb_tree_remove_node(tree, predecessor_node)
+        node.key = predecessor_key
+        return
+    if node.color == "black":
+        rb_tree_prepare_for_removal(node)
+    bst_remove(tree, node.key)
+
+def rb_tree_get_predecessor(node):
+    node = node.left
+    while node.right is not None:
+        node = node.right
+    return node
+
+def rb_tree_get_sibling(node):
+    if node.parent is not None:
+        if node == node.parent.left:
+            return node.parent_right
+        return node.parent.left
+    return None
+
+def rb_tree_is_null_or_black(node):
+    if node is None:
+        return True
+    return node.color == "black"
+
+def rb_tree_are_both_children_black(node):
+    if node.left is not None and node.left.color == "red":
+        return False
+    if node.right is not None and node.right.color == "red":
+        return False
+    return True
+
+def rb_tree_prepare_for_removal(tree, node):
+    
+```
+
+### 10.10: Python - Red-black trees
+#### The RBTNode class for red-black trees
+- The actual RedBlackTree class is similar to the BinarySearchTree class (RBTs are a form of BSTs)
+- The RBTNode class contains data members `key`, `left`, and `right`, along with new attributes
+  - `parent`: a pointer to the parent node, or None for root
+  - `color`: a string representing the node's color, set to either "red" or "black"
+- Additional class methods are below
+
+| Method name | Description |
+|-------------|-------------|
+| `are_both_children_black()` | Returns True if both child nodes are black. A child set to None is considered to be black, as per the red-black tree requirements |
+| `count()` | Returns the number of nodes in this subtree, including the node itself
