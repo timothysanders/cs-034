@@ -10,3 +10,5 @@ PCC CS-034 Advanced Python Programming Spring 2025
 - [Chapter 6: Lists](chapter-06.md)
 - [Chapter 7: Stacks and Queues](chapter-07.md)
 - [Chapter 8: Hash Tables](chapter-08.md)
+- [Chapter 9: Trees](chapter-09.md)
+- [Chapter 10: Balanced Trees](chapter-10.md)
