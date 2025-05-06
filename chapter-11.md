@@ -10,3 +10,76 @@
 - Inserts fill a level left-to-right before adding another level, to keep the tree at the minimum height possible
 - The upward swapping of nodes in a max-heap is called **percolating**
 - A **remove** from a max-heap is always a removal of the root, and is done by replacing the root with the last level's last node, and then swapping that node with its greatest child until no max-heap property violations occur
+#### Min-heap
+- A **min-heap** is similar to a max-heap, but a node's key is less than or equal to all of its children's keys
+
+### 11.2 Heaps using arrays
+#### Heap storage
+- Heaps are typically stored with arrays, with the heap's array form produced by traversing the tree levels from left to right and top to bottom. The root node is always at index 0, the root's left child at index 1, right child at index 2, etc.
+#### Parent and child indices
+- Because heaps are not implemented with node structures and parent/child pointers, traversing from a node to parent/child nodes requires referring to nodes by index
+- Parent and child indices for a heap
+
+| Node index | Parent index            | Child indices  |
+|------------|-------------------------|----------------|
+| 0          | N/A                     | 1, 2           |
+| 1          | 0                       | 3, 4           |
+| 2          | 0                       | 5, 6           |
+| 3          | 1                       | 7, 8           |
+| 4          | 1                       | 9, 10          |
+| 5          | 2                       | 11, 12         |
+| ...        | ...                     | ...            |
+| i          | $\lfloor(i-1)/2\rfloor$ | $2*i+1, 2*i+2$ |
+#### Percolate algorithm
+- Below is the pseudocode for array-based percolate-up and percolate-down functions for a max heap
+##### Max-heap percolate up
+```
+MaxHeapPercolateUp(nodeIndex, heapArray) {
+   while (nodeIndex > 0) {
+      parentIndex = (nodeIndex - 1) / 2
+      if (heapArray[nodeIndex] <= heapArray[parentIndex])
+         return
+      else {
+         swap heapArray[nodeIndex] and heapArray[parentIndex]
+         nodeIndex = parentIndex
+      }
+   }
+}
+```
+##### Max-heap percolate down
+```
+MaxHeapPercolateDown(nodeIndex, heapArray, arraySize) {
+   childIndex = 2 * nodeIndex + 1
+   value = heapArray[nodeIndex]
+
+   while (childIndex < arraySize) {
+      // Find the max among the node and all the node's children
+      maxValue = value
+      maxIndex = -1
+      for (i = 0; i < 2 && i + childIndex < arraySize; i++) {
+         if (heapArray[i + childIndex] > maxValue) {
+            maxValue = heapArray[i + childIndex]
+            maxIndex = i + childIndex
+         }
+      }
+
+      if (maxValue == value) {
+         return
+      }
+      else {
+         swap heapArray[nodeIndex] and heapArray[maxIndex]
+         nodeIndex = maxIndex
+         childIndex = 2 * nodeIndex + 1
+      }
+   }
+}
+```
+
+### 11.3: Python - Heaps
+#### Heaps and the MaxHeap class
+- Each level of a max heap grows left to right, and new levels are added only after the current level is completely full. This means an array implementation is efficient, the root is always at index 0, and indexes of parent/child nodes can be easily calculated
+  - `parent_index`: `(node_index - 1) // 2`
+  - `left_child_index`: `2 * node_index + 1`
+  - `right_child_index`: `2 * node_index + 2`
+- No actual node class is used, but the elements of the list are still called nodes
+- 
