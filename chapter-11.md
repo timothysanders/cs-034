@@ -82,4 +82,23 @@ MaxHeapPercolateDown(nodeIndex, heapArray, arraySize) {
   - `left_child_index`: `2 * node_index + 1`
   - `right_child_index`: `2 * node_index + 2`
 - No actual node class is used, but the elements of the list are still called nodes
+
+### 11.4: Heap sort
+#### Heapify operation
+- **Heapsort** is a sorting algorithm that takes advantage of a max-heap's properties by repeatedly removing the max and building a sorted array in reverse order. However, the unsorted array must be first converted into a heap, using the **heapify** operation
+- Heapify operation starts on the internal node with the largest index and continues down to, and including, the root node at index 0. For a binary tree with N nodes, the largest internal node index is $\lfloor N/2 \rfloor - 1$
+
+| Number of nodes in binary heap | Largest internal node index |
+|--------------------------------|-----------------------------|
+| 1                              | -1 (no internal nodes)      |
+| 2                              | 0                           |
+| 3                              | 0                           |
+| 4                              | 1                           |
+| 5                              | 1                           |
+| 6                              | 2                           |
+| 7                              | 2                           |
+| ...                            | ...                         |
+| N                              | $\lfloor N/2 \rfloor - 1$   |
+#### Heapsort overview
+- Heapsort begins by heapifying the array into a max-heap and using an end index value of the size of the array minus 1. Heapsort repeatedly removes the max value, stores that value at the end index, and decrements the end index, repeating until the end index is 0
 - 
