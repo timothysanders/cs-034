@@ -101,4 +101,55 @@ MaxHeapPercolateDown(nodeIndex, heapArray, arraySize) {
 | N                              | $\lfloor N/2 \rfloor - 1$   |
 #### Heapsort overview
 - Heapsort begins by heapifying the array into a max-heap and using an end index value of the size of the array minus 1. Heapsort repeatedly removes the max value, stores that value at the end index, and decrements the end index, repeating until the end index is 0
-- 
+#### Heapsort algorithm
+- Heapsort uses 2 loops to sort an array, the first heapifies the array using MaxHeapPercolateDown and the second loop removes the maximum value, stores it at the end index and decrements the end index (until it is 0)
+```
+Heapsort(numbers, numbersSize) {
+   // Heapify numbers array
+   for (i = numbersSize / 2 - 1; i >= 0; i--) {
+      MaxHeapPercolateDown(i, numbers, numbersSize)
+   }
+
+   for (i = numbersSize - 1; i > 0; i--) {
+      Swap numbers[0] and numbers[i]
+      MaxHeapPercolateDown(0, numbers, i)
+   }
+}
+```
+
+### 11.6: Priority queue abstract data type (ADT)
+#### Priority queue abstract data type
+- A **priority queue** is a queue where each item has a priority and items with higher priorities are closer to the front than items with lower priorities. The **enqueue** operation inserts an item so that it is closer to the front than all items of a lower priority and closer to the end than all items of equal or higher priority. The **dequeue** operation removes and returns an item at the front of the queue (with the highest priority).
+#### Common priority queue operations
+- In addition to enqueue and dequeue, priority queues usually support peek/length querying. **Peek** returns the highest priority item, without removing it from the front of the queue.
+
+| Operation          | Description                                                 | Example starting with priority queue: 42, 61, 98 (front is 42) |
+|--------------------|-------------------------------------------------------------|----------------------------------------------------------------|
+| Enqueue(PQueue, x) | Inserts x after all equal or higher priority items          | Enqueue(PQueue, 87). PQueue: 42, 61, 87, 98                    |
+| Dequeue(PQueue)    | Returns and removes the item at the front of PQueue         | Dequeue(PQueue) returns 42. PQueue: 61, 98                     |
+| Peek(PQueue)       | Returns but does not remove the item at the front of PQueue | Peek(PQueue) returns 42. PQueue: 42, 61, 98                    |
+| IsEmpty(PQueue)    | Returns true if PQueue has no items                         | IsEmpty(PQueue) returns false.                                 |
+| GetLength(PQueue)  | Returns the number of items in PQueue                       | GetLength(PQueue) returns 3.                                   |
+#### Enqueueing items with priority
+- A priority queue can be implemented such that each item's priority can be determined from the item itself, and a priority queue can be implemented with an **EnqueueWithPriority** operation
+#### Implementing priority queues with heaps
+- A priority queue is often implemented with a heap, which keeps the highest priority item as the root node and allows access in O(1) time. Adding or removing items from the queue operates in a worst-case O(log N) time
+
+| Priority queue operation | Heap functionality used to implement operation                           | Worst-case runtime complexity |
+|--------------------------|--------------------------------------------------------------------------|-------------------------------|
+| Enqueue                  | Insert                                                                   | O($\log N$)                   |
+| Dequeue                  | Remove                                                                   | O($\log N$)                   |
+| Peek                     | Return value in root node                                                | O(1)                          |
+| IsEmpty                  | Return true if no nodes in heap, false otherwise                         | O(1)                          |
+| GetLength                | Return number of nodes (expected to be stored in the heap's member data) | O(1)                          |
+
+### 11.7: Treaps
+#### Treap basics
+- A BST built from inserts of N nodes having random-ordered keys stays well-balanced and has near-minimum height, which means searches, inserts, and deletions are O(log N). However, insertion order may not always be random, so we need a data structure that randomizes BST inserts. A **treap** (combines "tree" and "heap") uses a main key that maintains the BST ordering property, and a secondary key generated randomly (often called "priority") during insertions that maintains a heap property. This combination usually keeps the tree balanced
+- Basic treap operations
+  - **search**: same as BST search using the main key
+  - **insert**: initially inserts a node as in a BST using the main key, then assigns a random priority to the node, and percolates the node up until the heap property is not violated. In a treap, a node is moved up via a rotation at the parent, which maintains the BST property
+  - **delete**: done by setting the node's priority such that the node should be a leaf, percolating the node down using rotations until the node is a left, and then removing the node
+#### Treap delete
+- Treap deletes can be done by first doing a BST delete (copying successor node to the node-to-delete, then deleting original successor), followed by percolating the node down until the heap properties are not violated
+- A simpler approach is to set the node-to-delete's priority to negative infinity (for a max-heap), percolate the node down until it is a leaf, then removing the node
