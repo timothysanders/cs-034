@@ -158,3 +158,28 @@ RecursiveDFS(current_v) {
 - The topological sort algorithm finds an ordered list of vertices from a directed graph where no vertex has an outgoing edge to a preceding vertex in the list. Topological sorting is useful in many real-world situations such as manufacturing (where some components must be built before other components) or course scheduling (where some courses must be completed as prerequisites to other courses). When the graph is drawn with the vertices lined up left to right in the order of a topological sort, then all edges will point in the direction from left to right.
 #### Iterating through a collection of edges
 - The topological sorting algorithm iterates through lists of edges, which we are representing in a 2-tuple form (from_vertex, to_vertex) and a for loop can iterate through a list or set of edges
+
+### 13.8: Minimum spanning tree
+#### Overview
+- A graph's **minimum spanning tree is a subset of the graph's edges that connect all vertices in the graph together with the minimum sum of edge weights. The graph must be weighted and connected. A **connected** graph contains a path between every pair of vertices
+#### Kruskal's minimum spanning tree algorithm
+- **Kruskal's minimum spanning tree algorithm** determines the subset of graph edges that connect all the graph's vertices with the minimum possible sum of edge weights. This algorithm uses three collections
+  - `edge_queue`: a priority queue of edges, initially containing all graph edges. Edge weights are priorities
+  - `results`: a collection of edges comprising the minimum spanning tree, initially empty
+  - `vertex_sets`: a collection of vertex sets. Each set represents vertices connected by edges in `result`. Initially, `vertex_sets` contains one set for each vertex
+- The algorithm executes while `edge_queue` has at least one edge. In each iteration, the edge with the lowest weight is removed from the edge queue. If the removed edge connects two different vertex sets, then the edge is added to the resulting minimum spanning tree, and the two vertex sets are merged.
+- Kruskal's algorithm has a space complexity of $O(|E| + |V|)$. If the edge list is sorted at the beginning, removals are done in constant time, and when combined with a mechanism to map a vertex to the containing vertex set in constant time, the algorithm's runtime complexity is $O(|E|\log|E|)$
+
+### 13.20: All pairs shortest path
+#### Overview and shortest paths matrix
+- An **all pairs shortest path** algorithm determines the shortest path between all possible pairs of vertices in a graph, using a V x V matrix to represent the shortest path lengths between all vertex pairs. Each row corresponds to a start vertex and each column corresponds to a terminating vertex for each path
+- These shortest path matrices only store the path lengths of the shortest path, not the sequence of vertices that make up the path
+- The shortest path length from any vertex to itself is 0
+#### Floyd-Warshall algorithm
+- The **Floyd-Warshall all-pairs shortest path algorithm** generates a V*V matrix of values representing the shortest path lengths between all vertex pairs in a graph. Graphs with cycles and negative edge weights are supported, but you cannot have negative cycles (which are cycles with edge weights that sum to a negative value).
+- The Floyd-Warshall algorithm initializes the shortest path lengths matrix using three steps
+  1. Every entry assigned with infinity
+  2. Each entry representing the path from a vertex to itself is assigned with 0
+  3. For each edge from X to Y in the graph, the matrix entry for the path from X to Y is initialized with the edge's weight
+- The algorithm then iterates through every vertex in the graph, for each vertex X, the shortest path lengths for all vertex pairs are recomputed by considering X as an intermediate vertex. For each matrix entry representing A to B, existing matrix entries are used to compute the length of the path from A through X to B. If this path is less than the current shortest path, the corresponding matrix entry is updated.
+- The Floyd-Warshall algorithm builds a V*V matrix and has a space complexity of $O(V^2)$. The matrix is constructed with a runtime complexity of $O(|V|^3)$
