@@ -13,3 +13,6 @@ PCC CS-034 Advanced Python Programming Spring 2025
 - [Chapter 9: Trees](chapter-09.md)
 - [Chapter 10: Balanced Trees](chapter-10.md)
 - [Chapter 11: Heaps and Treaps](chapter-11.md)
+- [Chapter 12: Sets](chapter-12.md)
+- [Chapter 13: Graphs](chapter-13.md)
+- [Chapter 14: Algorithms](chapter-14.md)
